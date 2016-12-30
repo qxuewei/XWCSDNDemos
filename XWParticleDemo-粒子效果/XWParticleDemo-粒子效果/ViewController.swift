@@ -12,7 +12,12 @@ class ViewController: UIViewController,Particleable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        addParticleEffect(view)
+        let poiter = CGPoint(x: UIScreen.main.bounds.width * 0.85, y: UIScreen.main.bounds.height - 20)
+        addParticleEffect(poiter)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        removeParticleEffect()
     }
 }
 
