@@ -12,6 +12,11 @@ class ViewController: UIViewController , Particleable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let redView : RedView = RedView.loadWithNib()
+        view.addSubview(redView)
+        
+        view.addSubview(GreenView.loadViewWithNib())
     }
     @IBAction func addParticle(_ sender: UIButton) {
         addParticle(sender.center)
