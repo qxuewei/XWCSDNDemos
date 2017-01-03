@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2EDF31AB1E1B476D003B52AB /* Particleable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EDF31AA1E1B476D003B52AB /* Particleable.swift */; };
 		2EEA1DFF1E166AA7001E71EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EEA1DFE1E166AA7001E71EE /* AppDelegate.swift */; };
 		2EEA1E011E166AA7001E71EE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EEA1E001E166AA7001E71EE /* ViewController.swift */; };
 		2EEA1E041E166AA7001E71EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2EEA1E021E166AA7001E71EE /* Main.storyboard */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2EDF31AA1E1B476D003B52AB /* Particleable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Particleable.swift; sourceTree = "<group>"; };
 		2EEA1DFB1E166AA7001E71EE /* XWProtocolDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XWProtocolDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EEA1DFE1E166AA7001E71EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2EEA1E001E166AA7001E71EE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				2EEA1E111E166DC6001E71EE /* NibLoadable.swift */,
+				2EDF31AA1E1B476D003B52AB /* Particleable.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -173,6 +176,7 @@
 				2EEA1E121E166DC6001E71EE /* NibLoadable.swift in Sources */,
 				2EEA1E011E166AA7001E71EE /* ViewController.swift in Sources */,
 				2EEA1E221E167080001E71EE /* RedView.swift in Sources */,
+				2EDF31AB1E1B476D003B52AB /* Particleable.swift in Sources */,
 				2EEA1E201E167080001E71EE /* GreenView.swift in Sources */,
 				2EEA1DFF1E166AA7001E71EE /* AppDelegate.swift in Sources */,
 			);
@@ -338,6 +342,7 @@
 				2EEA1E0F1E166AA7001E71EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
