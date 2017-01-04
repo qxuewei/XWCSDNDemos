@@ -7,12 +7,13 @@
 //
 
 import Foundation
+import UIKit
 
 protocol NibLoadable {
     
 }
 
-extension NibLoadable {
+extension NibLoadable where Self : UIView {
     static func loadViewWithNib() -> Self {
         return Bundle.main.loadNibNamed("\(self)", owner: nil, options: nil)?.last! as! Self
     }
