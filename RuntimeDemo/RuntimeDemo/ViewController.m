@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "Student.h"
+#import "NSString_XW.h"
+#import "Student_XW.h"
 
 //1.引入Runtime
 #import <objc/runtime.h>
@@ -26,8 +28,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSString *testExtensin = [[NSString alloc] init];
+//    testExtensin.height;
     [self.student performSelector:@selector(_playFootball)];
     [self.student performSelector:@selector(_playBasketballInAddress:with:) withObject:@"东单" withObject:@"sb露露"];
+    [Student eat];
+//    self.student.score
 //    self.student.SCORE = @"12";
 //    NSLog(@"%@",self.student.SCORE);
 }

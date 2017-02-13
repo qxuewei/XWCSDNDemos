@@ -16,6 +16,7 @@
 		2E232C3C1E4D980200DFF715 /* RuntimeDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E232C3B1E4D980200DFF715 /* RuntimeDemoTests.m */; };
 		2E232C471E4D980200DFF715 /* RuntimeDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E232C461E4D980200DFF715 /* RuntimeDemoUITests.m */; };
 		2E232C561E4D981500DFF715 /* Student.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E232C551E4D981500DFF715 /* Student.m */; };
+		2E53579C1E4DE27C0058AAA1 /* NSString+XW.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E53579B1E4DE27C0058AAA1 /* NSString+XW.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,10 @@
 		2E232C481E4D980200DFF715 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2E232C541E4D981500DFF715 /* Student.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Student.h; sourceTree = "<group>"; };
 		2E232C551E4D981500DFF715 /* Student.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Student.m; sourceTree = "<group>"; };
+		2E53579A1E4DE27C0058AAA1 /* NSString+XW.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+XW.h"; sourceTree = "<group>"; };
+		2E53579B1E4DE27C0058AAA1 /* NSString+XW.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+XW.m"; sourceTree = "<group>"; };
+		2E53579D1E4DE28F0058AAA1 /* NSString_XW.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSString_XW.h; path = ../NSString_XW.h; sourceTree = "<group>"; };
+		2E53579E1E4DE8820058AAA1 /* Student_XW.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Student_XW.h; path = ../Student_XW.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +120,10 @@
 				2E232C211E4D980200DFF715 /* Supporting Files */,
 				2E232C541E4D981500DFF715 /* Student.h */,
 				2E232C551E4D981500DFF715 /* Student.m */,
+				2E53579E1E4DE8820058AAA1 /* Student_XW.h */,
+				2E53579D1E4DE28F0058AAA1 /* NSString_XW.h */,
+				2E53579A1E4DE27C0058AAA1 /* NSString+XW.h */,
+				2E53579B1E4DE27C0058AAA1 /* NSString+XW.m */,
 			);
 			path = RuntimeDemo;
 			sourceTree = "<group>";
@@ -282,6 +291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E232C291E4D980200DFF715 /* ViewController.m in Sources */,
+				2E53579C1E4DE27C0058AAA1 /* NSString+XW.m in Sources */,
 				2E232C261E4D980200DFF715 /* AppDelegate.m in Sources */,
 				2E232C231E4D980200DFF715 /* main.m in Sources */,
 				2E232C561E4D981500DFF715 /* Student.m in Sources */,
@@ -520,6 +530,7 @@
 				2E232C4D1E4D980200DFF715 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2E232C4E1E4D980200DFF715 /* Build configuration list for PBXNativeTarget "RuntimeDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -528,6 +539,7 @@
 				2E232C501E4D980200DFF715 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2E232C511E4D980200DFF715 /* Build configuration list for PBXNativeTarget "RuntimeDemoUITests" */ = {
 			isa = XCConfigurationList;
@@ -536,6 +548,7 @@
 				2E232C531E4D980200DFF715 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -18,7 +18,7 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-//    [self addNewMethod];
+    [self addNewMethod];
 //    [self printProperty];
     [self addProperty];
     return YES;

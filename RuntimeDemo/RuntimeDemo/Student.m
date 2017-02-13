@@ -7,7 +7,7 @@
 //
 
 #import "Student.h"
-
+#import "Student_XW.h"
 @implementation Student
 +(void)study:(NSString *)classRoom{
     NSLog(@"study in %@",classRoom);
@@ -22,4 +22,9 @@
 -(double)totalRunMileage{
     return 123;
 }
+
++(void)eat{
+    NSLog(@"EAT");
+}
+
 @end
