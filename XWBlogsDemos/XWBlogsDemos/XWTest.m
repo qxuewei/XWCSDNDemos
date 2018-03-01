@@ -61,6 +61,62 @@ void myMethod(id self, SEL _cmd) {
     }
 }
 
+
+#pragma mark -Runtime
+/// 交换方法
++ (void)load {
+    [super load];
+    
+    Method originalM = class_getInstanceMethod([self class], @selector(originMethod));
+    Method exchangeM = class_getInstanceMethod([self class], @selector(exChangeMethod));
+    method_exchangeImplementations(originalM, exchangeM);
+    
+}
+
+- (void)originMethod {
+    NSLog(@"originMethod");
+    
+}
+- (void)exChangeMethod {
+    NSLog(@"exChangeMethod");
+    
+}
+
+/// 创建类
+- (void)creatClassMethod {
+
+    Class Person = objc_allocateClassPair([NSObject class], "Person", 0);
+    //添加属性
+    objc_property_attribute_t type = { "T", "@\"NSString\"" };
+    objc_property_attribute_t ownership = { "C", "" }; // C = copy
+    objc_property_attribute_t backingivar  = { "V", "_privateName" };
+    objc_property_attribute_t attrs[] = { type, ownership, backingivar };
+    class_addProperty(Person, "name", attrs, 3);
+    //添加方法
+    class_addMethod(Person, @selector(name), (IMP)nameGetter, "@@:");
+    class_addMethod(Person, @selector(setName:), (IMP)nameSetter, "v@:@");
+    //注册该类
+    objc_registerClassPair(Person);
+    
+    //获取实例
+    id instance = [[Person alloc] init];
+    NSLog(@"%@", instance);
+    [instance setName:@"hxn"];
+    NSLog(@"%@", [instance name]);
+}
+//get方法
+NSString *nameGetter(id self, SEL _cmd) {
+    Ivar ivar = class_getInstanceVariable([self class], "_privateName");
+    return object_getIvar(self, ivar);
+}
+//set方法
+void nameSetter(id self, SEL _cmd, NSString *newName) {
+    Ivar ivar = class_getInstanceVariable([self class], "_privateName");
+    id oldName = object_getIvar(self, ivar);
+    if (oldName != newName) object_setIvar(self, ivar, [newName copy]);
+}
+
+
 @end
 
 

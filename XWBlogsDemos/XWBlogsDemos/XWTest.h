@@ -14,4 +14,10 @@
 + (void)foo;
 
 - (void)unrecognized;
+
+- (void)originMethod;
+- (void)exChangeMethod;
+
+/// 创建类
+- (void)creatClassMethod;
 @end

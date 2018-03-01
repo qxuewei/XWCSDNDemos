@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "XWTest.h"
 
 @interface ViewController ()
 
@@ -18,7 +19,10 @@
     [super viewDidLoad];
 //    [self testCopy];
 //    [self GDC_Semaphore_Demo];
-    [self semaphoreDemo2];
+//    [self semaphoreDemo2];
+    
+    XWTest *test = [[XWTest alloc] init];
+    [test creatClassMethod];
 }
 
 - (void)GDC_Semaphore_Demo {
