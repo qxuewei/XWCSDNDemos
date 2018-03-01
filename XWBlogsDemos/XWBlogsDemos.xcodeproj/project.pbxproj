@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2EB31839204757B1004D274F /* XWTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EB31838204757B1004D274F /* XWTest.m */; };
 		2ECFBFBA204629C200466EF6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ECFBFB9204629C200466EF6 /* AppDelegate.m */; };
 		2ECFBFBD204629C200466EF6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ECFBFBC204629C200466EF6 /* ViewController.m */; };
 		2ECFBFC0204629C200466EF6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2ECFBFBE204629C200466EF6 /* Main.storyboard */; };
@@ -35,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2EB31837204757B1004D274F /* XWTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XWTest.h; sourceTree = "<group>"; };
+		2EB31838204757B1004D274F /* XWTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XWTest.m; sourceTree = "<group>"; };
 		2ECFBFB5204629C200466EF6 /* XWBlogsDemos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XWBlogsDemos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2ECFBFB8204629C200466EF6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		2ECFBFB9204629C200466EF6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -110,6 +113,8 @@
 				2ECFBFC3204629C200466EF6 /* LaunchScreen.storyboard */,
 				2ECFBFC6204629C200466EF6 /* Info.plist */,
 				2ECFBFC7204629C200466EF6 /* main.m */,
+				2EB31837204757B1004D274F /* XWTest.h */,
+				2EB31838204757B1004D274F /* XWTest.m */,
 			);
 			path = XWBlogsDemos;
 			sourceTree = "<group>";
@@ -267,6 +272,7 @@
 			files = (
 				2ECFBFBD204629C200466EF6 /* ViewController.m in Sources */,
 				2ECFBFC8204629C200466EF6 /* main.m in Sources */,
+				2EB31839204757B1004D274F /* XWTest.m in Sources */,
 				2ECFBFBA204629C200466EF6 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

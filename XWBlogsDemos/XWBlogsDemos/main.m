@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
+#import "XWTest.h"
 
 int main(int argc, char * argv[]) {
     @autoreleasepool {
+        XWTest *test = [[XWTest alloc] init];
+        [test unrecognized];
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }
