@@ -1,0 +1,609 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DE467D2720887709009CE94E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DE467D2620887709009CE94E /* AppDelegate.m */; };
+		DE467D2A20887709009CE94E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE467D2920887709009CE94E /* ViewController.m */; };
+		DE467D2D20887709009CE94E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE467D2B20887709009CE94E /* Main.storyboard */; };
+		DE467D3020887709009CE94E /* XWStatusVolumeManagerDome.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DE467D2E20887709009CE94E /* XWStatusVolumeManagerDome.xcdatamodeld */; };
+		DE467D322088770A009CE94E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE467D312088770A009CE94E /* Assets.xcassets */; };
+		DE467D352088770A009CE94E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE467D332088770A009CE94E /* LaunchScreen.storyboard */; };
+		DE467D382088770A009CE94E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DE467D372088770A009CE94E /* main.m */; };
+		DE467D422088770A009CE94E /* XWStatusVolumeManagerDomeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DE467D412088770A009CE94E /* XWStatusVolumeManagerDomeTests.m */; };
+		DE467D4D2088770A009CE94E /* XWStatusVolumeManagerDomeUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = DE467D4C2088770A009CE94E /* XWStatusVolumeManagerDomeUITests.m */; };
+		DE467D5D20887727009CE94E /* TLStatusVolumeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DE467D5C20887727009CE94E /* TLStatusVolumeManager.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DE467D3E2088770A009CE94E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DE467D1A20887709009CE94E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DE467D2120887709009CE94E;
+			remoteInfo = XWStatusVolumeManagerDome;
+		};
+		DE467D492088770A009CE94E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DE467D1A20887709009CE94E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DE467D2120887709009CE94E;
+			remoteInfo = XWStatusVolumeManagerDome;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DE467D2220887709009CE94E /* XWStatusVolumeManagerDome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XWStatusVolumeManagerDome.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE467D2520887709009CE94E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		DE467D2620887709009CE94E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		DE467D2820887709009CE94E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		DE467D2920887709009CE94E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		DE467D2C20887709009CE94E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DE467D2F20887709009CE94E /* XWStatusVolumeManagerDome.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = XWStatusVolumeManagerDome.xcdatamodel; sourceTree = "<group>"; };
+		DE467D312088770A009CE94E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DE467D342088770A009CE94E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		DE467D362088770A009CE94E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DE467D372088770A009CE94E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DE467D3D2088770A009CE94E /* XWStatusVolumeManagerDomeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XWStatusVolumeManagerDomeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE467D412088770A009CE94E /* XWStatusVolumeManagerDomeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XWStatusVolumeManagerDomeTests.m; sourceTree = "<group>"; };
+		DE467D432088770A009CE94E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DE467D482088770A009CE94E /* XWStatusVolumeManagerDomeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XWStatusVolumeManagerDomeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE467D4C2088770A009CE94E /* XWStatusVolumeManagerDomeUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XWStatusVolumeManagerDomeUITests.m; sourceTree = "<group>"; };
+		DE467D4E2088770A009CE94E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DE467D5B20887727009CE94E /* TLStatusVolumeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLStatusVolumeManager.h; sourceTree = "<group>"; };
+		DE467D5C20887727009CE94E /* TLStatusVolumeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLStatusVolumeManager.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DE467D1F20887709009CE94E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE467D3A2088770A009CE94E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE467D452088770A009CE94E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DE467D1920887709009CE94E = {
+			isa = PBXGroup;
+			children = (
+				DE467D2420887709009CE94E /* XWStatusVolumeManagerDome */,
+				DE467D402088770A009CE94E /* XWStatusVolumeManagerDomeTests */,
+				DE467D4B2088770A009CE94E /* XWStatusVolumeManagerDomeUITests */,
+				DE467D2320887709009CE94E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DE467D2320887709009CE94E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DE467D2220887709009CE94E /* XWStatusVolumeManagerDome.app */,
+				DE467D3D2088770A009CE94E /* XWStatusVolumeManagerDomeTests.xctest */,
+				DE467D482088770A009CE94E /* XWStatusVolumeManagerDomeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DE467D2420887709009CE94E /* XWStatusVolumeManagerDome */ = {
+			isa = PBXGroup;
+			children = (
+				DE467D5A20887727009CE94E /* StatusVolume */,
+				DE467D2520887709009CE94E /* AppDelegate.h */,
+				DE467D2620887709009CE94E /* AppDelegate.m */,
+				DE467D2820887709009CE94E /* ViewController.h */,
+				DE467D2920887709009CE94E /* ViewController.m */,
+				DE467D2B20887709009CE94E /* Main.storyboard */,
+				DE467D312088770A009CE94E /* Assets.xcassets */,
+				DE467D332088770A009CE94E /* LaunchScreen.storyboard */,
+				DE467D362088770A009CE94E /* Info.plist */,
+				DE467D372088770A009CE94E /* main.m */,
+				DE467D2E20887709009CE94E /* XWStatusVolumeManagerDome.xcdatamodeld */,
+			);
+			path = XWStatusVolumeManagerDome;
+			sourceTree = "<group>";
+		};
+		DE467D402088770A009CE94E /* XWStatusVolumeManagerDomeTests */ = {
+			isa = PBXGroup;
+			children = (
+				DE467D412088770A009CE94E /* XWStatusVolumeManagerDomeTests.m */,
+				DE467D432088770A009CE94E /* Info.plist */,
+			);
+			path = XWStatusVolumeManagerDomeTests;
+			sourceTree = "<group>";
+		};
+		DE467D4B2088770A009CE94E /* XWStatusVolumeManagerDomeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				DE467D4C2088770A009CE94E /* XWStatusVolumeManagerDomeUITests.m */,
+				DE467D4E2088770A009CE94E /* Info.plist */,
+			);
+			path = XWStatusVolumeManagerDomeUITests;
+			sourceTree = "<group>";
+		};
+		DE467D5A20887727009CE94E /* StatusVolume */ = {
+			isa = PBXGroup;
+			children = (
+				DE467D5B20887727009CE94E /* TLStatusVolumeManager.h */,
+				DE467D5C20887727009CE94E /* TLStatusVolumeManager.m */,
+			);
+			path = StatusVolume;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DE467D2120887709009CE94E /* XWStatusVolumeManagerDome */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DE467D512088770A009CE94E /* Build configuration list for PBXNativeTarget "XWStatusVolumeManagerDome" */;
+			buildPhases = (
+				DE467D1E20887709009CE94E /* Sources */,
+				DE467D1F20887709009CE94E /* Frameworks */,
+				DE467D2020887709009CE94E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = XWStatusVolumeManagerDome;
+			productName = XWStatusVolumeManagerDome;
+			productReference = DE467D2220887709009CE94E /* XWStatusVolumeManagerDome.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DE467D3C2088770A009CE94E /* XWStatusVolumeManagerDomeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DE467D542088770A009CE94E /* Build configuration list for PBXNativeTarget "XWStatusVolumeManagerDomeTests" */;
+			buildPhases = (
+				DE467D392088770A009CE94E /* Sources */,
+				DE467D3A2088770A009CE94E /* Frameworks */,
+				DE467D3B2088770A009CE94E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DE467D3F2088770A009CE94E /* PBXTargetDependency */,
+			);
+			name = XWStatusVolumeManagerDomeTests;
+			productName = XWStatusVolumeManagerDomeTests;
+			productReference = DE467D3D2088770A009CE94E /* XWStatusVolumeManagerDomeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DE467D472088770A009CE94E /* XWStatusVolumeManagerDomeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DE467D572088770A009CE94E /* Build configuration list for PBXNativeTarget "XWStatusVolumeManagerDomeUITests" */;
+			buildPhases = (
+				DE467D442088770A009CE94E /* Sources */,
+				DE467D452088770A009CE94E /* Frameworks */,
+				DE467D462088770A009CE94E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DE467D4A2088770A009CE94E /* PBXTargetDependency */,
+			);
+			name = XWStatusVolumeManagerDomeUITests;
+			productName = XWStatusVolumeManagerDomeUITests;
+			productReference = DE467D482088770A009CE94E /* XWStatusVolumeManagerDomeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DE467D1A20887709009CE94E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0930;
+				ORGANIZATIONNAME = "邱学伟";
+				TargetAttributes = {
+					DE467D2120887709009CE94E = {
+						CreatedOnToolsVersion = 9.3;
+					};
+					DE467D3C2088770A009CE94E = {
+						CreatedOnToolsVersion = 9.3;
+						TestTargetID = DE467D2120887709009CE94E;
+					};
+					DE467D472088770A009CE94E = {
+						CreatedOnToolsVersion = 9.3;
+						TestTargetID = DE467D2120887709009CE94E;
+					};
+				};
+			};
+			buildConfigurationList = DE467D1D20887709009CE94E /* Build configuration list for PBXProject "XWStatusVolumeManagerDome" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DE467D1920887709009CE94E;
+			productRefGroup = DE467D2320887709009CE94E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DE467D2120887709009CE94E /* XWStatusVolumeManagerDome */,
+				DE467D3C2088770A009CE94E /* XWStatusVolumeManagerDomeTests */,
+				DE467D472088770A009CE94E /* XWStatusVolumeManagerDomeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DE467D2020887709009CE94E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE467D352088770A009CE94E /* LaunchScreen.storyboard in Resources */,
+				DE467D322088770A009CE94E /* Assets.xcassets in Resources */,
+				DE467D2D20887709009CE94E /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE467D3B2088770A009CE94E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE467D462088770A009CE94E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DE467D1E20887709009CE94E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE467D2A20887709009CE94E /* ViewController.m in Sources */,
+				DE467D3020887709009CE94E /* XWStatusVolumeManagerDome.xcdatamodeld in Sources */,
+				DE467D5D20887727009CE94E /* TLStatusVolumeManager.m in Sources */,
+				DE467D382088770A009CE94E /* main.m in Sources */,
+				DE467D2720887709009CE94E /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE467D392088770A009CE94E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE467D422088770A009CE94E /* XWStatusVolumeManagerDomeTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE467D442088770A009CE94E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE467D4D2088770A009CE94E /* XWStatusVolumeManagerDomeUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DE467D3F2088770A009CE94E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DE467D2120887709009CE94E /* XWStatusVolumeManagerDome */;
+			targetProxy = DE467D3E2088770A009CE94E /* PBXContainerItemProxy */;
+		};
+		DE467D4A2088770A009CE94E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DE467D2120887709009CE94E /* XWStatusVolumeManagerDome */;
+			targetProxy = DE467D492088770A009CE94E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DE467D2B20887709009CE94E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DE467D2C20887709009CE94E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		DE467D332088770A009CE94E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DE467D342088770A009CE94E /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DE467D4F2088770A009CE94E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		DE467D502088770A009CE94E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DE467D522088770A009CE94E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EFBGB9EWP5;
+				INFOPLIST_FILE = XWStatusVolumeManagerDome/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qiuxuewei.XWStatusVolumeManagerDome;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DE467D532088770A009CE94E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EFBGB9EWP5;
+				INFOPLIST_FILE = XWStatusVolumeManagerDome/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qiuxuewei.XWStatusVolumeManagerDome;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DE467D552088770A009CE94E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = XWStatusVolumeManagerDomeTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qiuxuewei.XWStatusVolumeManagerDomeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/XWStatusVolumeManagerDome.app/XWStatusVolumeManagerDome";
+			};
+			name = Debug;
+		};
+		DE467D562088770A009CE94E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = XWStatusVolumeManagerDomeTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qiuxuewei.XWStatusVolumeManagerDomeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/XWStatusVolumeManagerDome.app/XWStatusVolumeManagerDome";
+			};
+			name = Release;
+		};
+		DE467D582088770A009CE94E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = XWStatusVolumeManagerDomeUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qiuxuewei.XWStatusVolumeManagerDomeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = XWStatusVolumeManagerDome;
+			};
+			name = Debug;
+		};
+		DE467D592088770A009CE94E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = XWStatusVolumeManagerDomeUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.qiuxuewei.XWStatusVolumeManagerDomeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = XWStatusVolumeManagerDome;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DE467D1D20887709009CE94E /* Build configuration list for PBXProject "XWStatusVolumeManagerDome" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE467D4F2088770A009CE94E /* Debug */,
+				DE467D502088770A009CE94E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DE467D512088770A009CE94E /* Build configuration list for PBXNativeTarget "XWStatusVolumeManagerDome" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE467D522088770A009CE94E /* Debug */,
+				DE467D532088770A009CE94E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DE467D542088770A009CE94E /* Build configuration list for PBXNativeTarget "XWStatusVolumeManagerDomeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE467D552088770A009CE94E /* Debug */,
+				DE467D562088770A009CE94E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DE467D572088770A009CE94E /* Build configuration list for PBXNativeTarget "XWStatusVolumeManagerDomeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE467D582088770A009CE94E /* Debug */,
+				DE467D592088770A009CE94E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		DE467D2E20887709009CE94E /* XWStatusVolumeManagerDome.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				DE467D2F20887709009CE94E /* XWStatusVolumeManagerDome.xcdatamodel */,
+			);
+			currentVersion = DE467D2F20887709009CE94E /* XWStatusVolumeManagerDome.xcdatamodel */;
+			path = XWStatusVolumeManagerDome.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = DE467D1A20887709009CE94E /* Project object */;
+}
