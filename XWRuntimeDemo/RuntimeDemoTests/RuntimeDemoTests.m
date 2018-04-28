@@ -7,6 +7,8 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "People.h"
+#import <objc/runtime.h>
 
 @interface RuntimeDemoTests : XCTestCase
 
@@ -24,16 +26,23 @@
     [super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+//成员变量
+- (void)testIvar {
+    BOOL isSuccessAddIvar = class_addIvar([NSString class], "_phone", sizeof(id), log2(sizeof(id)), "@");
+    if (isSuccessAddIvar) {
+        NSLog(@"Add Ivar success");
+    }else{
+        NSLog(@"Add Ivar error");
+    }
+    unsigned int outCount;
+    Ivar *ivarList = class_copyIvarList([People class], &outCount);
+    for (int i = 0; i < outCount; i++) {
+        Ivar ivar = ivarList[i];
+        const char *ivarName = ivar_getName(ivar);
+        const char *type = ivar_getTypeEncoding(ivar);
+        ptrdiff_t offset = ivar_getOffset(ivar);
+        NSLog(@"ivar:%s, offset:%zd, type:%s", ivarName, offset, type);
+    }
 }
 
 @end

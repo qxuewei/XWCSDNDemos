@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "People.h"
 
 @interface ViewController ()
 
@@ -19,9 +20,6 @@
     // Do any additional setup after loading the view, typically from a nib.
 }
 
-//获取类名
-- (void)getClassName {
-    
-}
+
 
 @end

@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface People : NSObject
-
+@interface People : NSObject {
+    int uid;
+    NSNumber *weight;
+    double height;
+}
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, strong) NSNumber *age;
+@property (nonatomic, assign) NSUInteger sex;
+@property (nonatomic, copy) NSString *address;
 @end
