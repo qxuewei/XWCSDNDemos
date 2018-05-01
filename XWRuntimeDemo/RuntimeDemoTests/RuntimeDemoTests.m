@@ -29,6 +29,39 @@
     [super tearDown];
 }
 
+- (void)testCreteInstance {
+    id testInstance = class_createInstance([NSString class], sizeof(unsigned));
+    id str1 = [testInstance init];
+    NSLog(@"%@",[str1 class]);
+    id str2 = @"Test";
+    NSLog(@"%@",[str2 class]);
+}
+
+- (void)testAddClass {
+    Class TestClass = objc_allocateClassPair([NSObject class], "myClass", 0);
+    if (class_addIvar(TestClass, "myIvar", sizeof(NSString *), sizeof(NSString *), "@")) {
+        NSLog(@"Add Ivar Success");
+    }
+    class_addMethod(TestClass, @selector(method1:), (IMP)method0, "v@:");
+    // 注册这个类到runtime才可使用
+    objc_registerClassPair(TestClass);
+    
+    // 生成一个实例化对象
+    id myObjc = [[TestClass alloc] init];
+    NSString *str = @"qiuxuewei";
+    //给刚刚添加的变量赋值
+    //object_setInstanceVariable(myobj, "myIvar", (void *)&str);在ARC下不允许使用
+    [myObjc setValue:str forKey:@"myIvar"];
+    [myObjc method1:10086];
+}
+- (void)method1:(int)a {
+}
+void method0(id self, SEL _cmd, int a) {
+    Ivar v = class_getInstanceVariable([self class], "myIvar");
+    id o = object_getIvar(self, v);
+    NSLog(@"%@ \n int a is %d", o,a);
+}
+
 - (void)testVersion {
     int version = class_getVersion([People class]);
     NSLog(@"version %d",version);
