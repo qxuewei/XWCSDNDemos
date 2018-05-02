@@ -29,6 +29,19 @@
     [super tearDown];
 }
 
+- (void)testCoder {
+    NSString *key = @"peopleKey";
+    People * people = [[People alloc] init];
+    people.name = @"邱学伟";
+    people.age = @18;
+    NSData *peopleData = [NSKeyedArchiver archivedDataWithRootObject:people];
+    [[NSUserDefaults standardUserDefaults] setObject:peopleData forKey:key];
+    
+    NSData *testData = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    People *testPeople = [NSKeyedUnarchiver unarchiveObjectWithData:testData];
+    NSLog(@"%@",testPeople.name);
+}
+
 - (void)testCreteInstance {
     id testInstance = class_createInstance([NSString class], sizeof(unsigned));
     id str1 = [testInstance init];
@@ -43,8 +56,8 @@
         NSLog(@"Add Ivar Success");
     }
     class_addMethod(TestClass, @selector(method1:), (IMP)method0, "v@:");
-    // 注册这个类到runtime才可使用
-    objc_registerClassPair(TestClass);
+    // 注册这个类到runtime才可使用 ARC 失效
+//    objc_registerClassPair(TestClass);
     
     // 生成一个实例化对象
     id myObjc = [[TestClass alloc] init];
