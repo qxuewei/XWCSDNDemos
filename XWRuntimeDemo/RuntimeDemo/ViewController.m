@@ -7,7 +7,8 @@
 //
 
 #import "ViewController.h"
-#import "People.h"
+#import "People+Category.h"
+
 
 @interface ViewController ()
 
@@ -17,9 +18,16 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+//    [self testCategory];
 }
 
+- (void)testCategory {
+    People *people = [[People alloc] init];
+    people.name = @"极客学伟";
+    people.blog = @"www.qiuxuewei.com";
+    NSLog(@"blog : %@",people.blog);
+}
 
 
 @end

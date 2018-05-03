@@ -27,7 +27,81 @@
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+    
 }
+
+
+- (void)testCommonMethod {
+//    for (int i = 0; i < 10000; i++) {
+//        [self logMethod:i];
+//    }
+    //执行时长: Test Case '-[RuntimeDemoTests testCommonMethod]' passed (2.311 seconds).
+    
+//    if ([self respondsToSelector:@selector(logMethod:)]) {
+//        [self performSelector:@selector(logMethod:) withObject:[NSNumber numberWithInt:10086]];
+//    }
+    
+    People * people = [[People alloc] init];
+    [people performSelector:@selector(people3log)];
+}
+
+- (void)testRuntimeMethod {
+    void(*logM)(id, SEL, int);
+    IMP imp = [self methodForSelector:@selector(logMethod:)];
+    logM = (void(*)(id, SEL, int))imp;
+    for (int i = 0; i < 10000; i++) {
+        logM(self, @selector(logMethod:), i);
+    }
+    //执行时长: Test Case '-[RuntimeDemoTests testRuntimeMethod]' passed (2.199 seconds).
+}
+
+- (void)logMethod:(int)i {
+    NSLog(@"%d",i);
+}
+
+- (void)testMethod {
+    /*
+    // 调用指定方法的实现
+    id method_invoke (id receiver, Method m, ...);
+    
+    // 调用返回一个数据结构的方法的实现
+    void method_invoke_stret (id receiver, Method m, ...);
+    
+    // 获取方法名
+    SEL method_getName (Method m);
+    
+    // 获取方法的实现
+    IMP method_getImplementation (Method m);
+    
+    // 获取描述方法参数和返回值类型的字符串
+    const char * method_getTypeEncoding (Method m);
+    
+    // 获取方法的返回值类型的字符串
+    char * method_copyReturnType ( Method m );
+    
+    // 获取方法的指定位置参数的类型字符串
+    char * method_copyArgumentType ( Method m, unsigned int index );
+    
+    // 通过引用返回方法的返回值类型字符串
+    void method_getReturnType ( Method m, char *dst, size_t dst_len );
+    
+    // 返回方法的参数的个数
+    unsigned int method_getNumberOfArguments ( Method m );
+    
+    // 通过引用返回方法指定位置参数的类型字符串
+    void method_getArgumentType ( Method m, unsigned int index, char *dst, size_t dst_len );
+    
+    // 返回指定方法的方法描述结构体
+    struct objc_method_description * method_getDescription ( Method m );
+    
+    // 设置方法的实现
+    IMP method_setImplementation ( Method m, IMP imp );
+    
+    // 交换两个方法的实现
+    void method_exchangeImplementations ( Method m1, Method m2 );
+     */
+}
+
 
 - (void)testCoder {
     NSString *key = @"peopleKey";

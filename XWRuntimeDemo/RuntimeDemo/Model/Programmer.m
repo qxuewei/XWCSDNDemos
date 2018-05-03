@@ -9,5 +9,11 @@
 #import "Programmer.h"
 
 @implementation Programmer
-
++ (void)load {
+    SEL sel = @selector(testMethod);
+//    NSLog(@"Programmer sel = %p",sel);
+}
+- (void)testMethod {
+    NSLog(@"testMethod");
+}
 @end

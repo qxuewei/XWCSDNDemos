@@ -8,6 +8,6 @@
 
 #import "People.h"
 
-@interface Programmer : People
+@interface Programmer : NSObject
 
 @end
