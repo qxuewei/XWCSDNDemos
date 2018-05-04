@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "People+Category.h"
-
+#import <objc/runtime.h>
 
 @interface ViewController ()
 
@@ -16,11 +16,26 @@
 
 @implementation ViewController
 
++ (void)load {
+    [super load];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self testBlock];
+    
 //    [self testCategory];
 }
+
+- (void)testBlock {
+    IMP imp = imp_implementationWithBlock(^(id obj, NSString *str) {
+        NSLog(@"testBlock - %@",str);
+    });
+    class_addMethod(self.class, @selector(testBlock:), imp, "v@:@");
+    [self performSelector:@selector(testBlock:) withObject:@"邱学伟!"];
+}
+
 
 - (void)testCategory {
     People *people = [[People alloc] init];

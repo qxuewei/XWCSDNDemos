@@ -9,6 +9,8 @@
 #import "People+Category.h"
 #import <objc/runtime.h>
 @implementation People (Category)
+
+#pragma mark - 新增属性
 static const char * cPeopleBlogKey = "cPeopleBlogKey";
 - (NSString *)blog {
     return objc_getAssociatedObject(self, cPeopleBlogKey);

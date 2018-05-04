@@ -84,7 +84,6 @@ void functionForMethod (id self, SEL _cmd) {
     }
 }
 
-@end
 - (void)testMethod {
     NSLog(@"testMethod");
 }

@@ -30,6 +30,24 @@
     
 }
 
+- (void)testBlock {
+    IMP imp = imp_implementationWithBlock(^(id obj, NSString *str) {
+        NSLog(@"testBlock - %@",str);
+    });
+    class_addMethod(<#Class  _Nullable __unsafe_unretained cls#>, <#SEL  _Nonnull name#>, <#IMP  _Nonnull imp#>, <#const char * _Nullable types#>)
+}
+
+- (void)testImage {
+    NSLog(@"获取指定类所在动态库");
+    NSLog(@"UIView's Framework: %s", class_getImageName(NSClassFromString(@"UIView")));
+    NSLog(@"获取指定库或框架中所有类的类名");
+    unsigned int outCount;
+    const char ** classes = objc_copyClassNamesForImage(class_getImageName(NSClassFromString(@"UIView")), &outCount);
+    for (int i = 0; i < outCount; i++) {
+        NSLog(@"class name: %s", classes[i]);
+    }
+}
+
 
 - (void)testCommonMethod {
 //    for (int i = 0; i < 10000; i++) {

@@ -19,6 +19,7 @@
 		DE411413209317680090091E /* People.m in Sources */ = {isa = PBXBuildFile; fileRef = DE411412209317680090091E /* People.m */; };
 		DE411416209317AC0090091E /* Programmer.m in Sources */ = {isa = PBXBuildFile; fileRef = DE411415209317AC0090091E /* Programmer.m */; };
 		DE742881209ADCB300B849B4 /* People+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = DE742880209ADCB300B849B4 /* People+Category.m */; };
+		DE742BEA209C129100B849B4 /* ViewController+Method.m in Sources */ = {isa = PBXBuildFile; fileRef = DE742BE9209C129100B849B4 /* ViewController+Method.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,8 @@
 		DE411415209317AC0090091E /* Programmer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Programmer.m; sourceTree = "<group>"; };
 		DE74287F209ADCB300B849B4 /* People+Category.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "People+Category.h"; sourceTree = "<group>"; };
 		DE742880209ADCB300B849B4 /* People+Category.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "People+Category.m"; sourceTree = "<group>"; };
+		DE742BE8209C129100B849B4 /* ViewController+Method.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ViewController+Method.h"; sourceTree = "<group>"; };
+		DE742BE9209C129100B849B4 /* ViewController+Method.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ViewController+Method.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +120,8 @@
 				DE4113DC2093169C0090091E /* AppDelegate.m */,
 				DE4113DE2093169C0090091E /* ViewController.h */,
 				DE4113DF2093169C0090091E /* ViewController.m */,
+				DE742BE8209C129100B849B4 /* ViewController+Method.h */,
+				DE742BE9209C129100B849B4 /* ViewController+Method.m */,
 				DE4113E12093169C0090091E /* Main.storyboard */,
 				DE4113E72093169D0090091E /* Assets.xcassets */,
 				DE4113E92093169D0090091E /* LaunchScreen.storyboard */,
@@ -293,6 +298,7 @@
 				DE411413209317680090091E /* People.m in Sources */,
 				DE411416209317AC0090091E /* Programmer.m in Sources */,
 				DE4113EE2093169D0090091E /* main.m in Sources */,
+				DE742BEA209C129100B849B4 /* ViewController+Method.m in Sources */,
 				DE742881209ADCB300B849B4 /* People+Category.m in Sources */,
 				DE4113E62093169C0090091E /* RuntimeDemo.xcdatamodeld in Sources */,
 			);
