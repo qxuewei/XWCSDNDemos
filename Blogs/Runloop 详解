@@ -167,5 +167,245 @@ CFRunLoopGetMain(); // 获得主线程的RunLoop对象
 3. Runloop在第一次获取时创建，在线程结束时销毁
 4. Thread 包含一个CFRunloop, 一个CFRunloop 包含一种CFRunloopMode, model 包含 CFRunloopSource, CFRunloopTimer, CFRunloopObserver.
 
+![RunloopModels](https://raw.githubusercontent.com/qxuewei/XWCSDNDemos/master/Images/runloopmodels.png)
+
+### 6.2 主线程想关联的Runloop创建
+
+CFRunloopRef 源码
+
+```objective-c
+// 创建字典
+ CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorSystemDefault, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+
+// 创建主线程 根据传入的主线程创建主线程对应的RunLoop
+ CFRunLoopRef mainLoop = __CFRunLoopCreate(pthread_main_thread_np());
+
+// 保存主线程 将主线程-key和RunLoop-Value保存到字典中
+ CFDictionarySetValue(dict, pthreadPointer(pthread_main_thread_np()), mainLoop);
+```
+
+### 6.3 创建与子线程想关联的Runloop
+Apple 不允许直接创建Runloop, 它只提供了两个自动获取的函数： CFRunLoopGetMain() 和 CFRunLoopGetCurrent()。
+CFRunLoopRef源码:
+
+``` objective-c
+// 全局的Dictionary，key 是 pthread_t， value 是 CFRunLoopRef
+static CFMutableDictionaryRef loopsDic;
+// 访问 loopsDic 时的锁
+static CFSpinLock_t loopsLock;
+
+// 获取一个 pthread 对应的 RunLoop。
+CFRunLoopRef _CFRunLoopGet(pthread_t thread) {
+    OSSpinLockLock(&loopsLock);
+
+    if (!loopsDic) {
+        // 第一次进入时，初始化全局Dic，并先为主线程创建一个 RunLoop。
+        loopsDic = CFDictionaryCreateMutable();
+        CFRunLoopRef mainLoop = _CFRunLoopCreate();
+        CFDictionarySetValue(loopsDic, pthread_main_thread_np(), mainLoop);
+    }
+
+    // 直接从 Dictionary 里获取。
+    CFRunLoopRef loop = CFDictionaryGetValue(loopsDic, thread));
+
+    if (!loop) {
+        // 取不到时，创建一个
+        loop = _CFRunLoopCreate();
+        CFDictionarySetValue(loopsDic, thread, loop);
+        // 注册一个回调，当线程销毁时，顺便也销毁其对应的 RunLoop。
+        _CFSetTSD(..., thread, loop, __CFFinalizeRunLoop);
+    }
+
+    OSSpinLockUnLock(&loopsLock);
+    return loop;
+}
+
+CFRunLoopRef CFRunLoopGetMain() {
+    return _CFRunLoopGet(pthread_main_thread_np());
+}
+
+CFRunLoopRef CFRunLoopGetCurrent() {
+    return _CFRunLoopGet(pthread_self());
+}
+```
+可以看出，线程和 RunLoop 之间是一一对应的，其关系是保存在一个全局的 Dictionary 里。线程刚创建时并没有 RunLoop，如果你不主动获取，那它一直都不会有。RunLoop 的创建是发生在第一次获取时，RunLoop 的销毁是发生在线程结束时。你只能在一个线程的内部获取其 RunLoop（主线程除外）。
+
+[NSRunLoop currentRunLoop];方法调用时，会先看一下字典里有没有存子线程相对用的RunLoop，如果有则直接返回RunLoop，如果没有则会创建一个，并将与之对应的子线程存入字典中。
+
+## 7. Runloop 相关类
+
+ Core Foundation中关于RunLoop的5个类：
+ 
+```
+CFRunLoopRef  //获得当前RunLoop和主RunLoop
+CFRunLoopModeRef  //运行模式，只能选择一种，在不同模式中做不同的操作
+CFRunLoopSourceRef  //事件源，输入源
+CFRunLoopTimerRef //定时器时间
+CFRunLoopObserverRef //观察者
+```
+
+### 7.1 CFRunLoopRef  
+
+ 一个Runloop包含若干个Mode, 每个Mode又包含若干个Source / Timer / Observer. 每次调用Runloop 的主函数时，只能指定其中一个Mode, 这个Mode被称作 CurrentMode. 如果需要切换Mode, 只能退出Loop, 再重新指定一个Mode进入。这样做主要是为了分隔开不同组的 Source/Timer/Observer, 让其互不影响。
+ 
+ 系统默认注册了 5 个Mode, 其中常见的有第 1，2 种：
+ 
+``` objective-c
+1. kCFRunLoopDefaultMode：App的默认Mode，通常主线程是在这个Mode下运行
+2. UITrackingRunLoopMode：界面跟踪 Mode，用于 ScrollView 追踪触摸滑动，保证界面滑动时不受其他 Mode 影响
+3. UIInitializationRunLoopMode: 在刚启动 App 时第进入的第一个 Mode，启动完成后就不再使用
+4. GSEventReceiveRunLoopMode: 接受系统事件的内部 Mode，通常用不到
+5. kCFRunLoopCommonModes: 这是一个占位用的Mode，作为标记kCFRunLoopDefaultMode和UITrackingRunLoopMode用，并不是一种真正的Mode
+```
+
+上面的Source/Timer/Observer 被统称为 model item， 一个item 可以被同时加入多个 Mode. 但一个item被重复加入同一个mode时是不会有效果的。如果一个mode中一个item都没有，则Runloop会直接退出，不进入循环。
+
+Mode 间切换
+我们平时在开发中一定遇到过，当我们使用NSTimer每一段时间执行一些事情时滑动UIScrollView，NSTimer就会暂停，当我们停止滑动以后，NSTimer又会重新恢复的情况，我们通过一段代码来看一下：
+
+```objective-c
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    // [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(show) userInfo:nil repeats:YES];
+    NSTimer *timer = [NSTimer timerWithTimeInterval:2.0 target:self selector:@selector(show) userInfo:nil repeats:YES];
+    // 加入到RunLoop中才可以运行
+    // 1. 把定时器添加到RunLoop中，并且选择默认运行模式NSDefaultRunLoopMode = kCFRunLoopDefaultMode
+    // [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+    // 当textFiled滑动的时候，timer失效，停止滑动时，timer恢复
+    // 原因：当textFiled滑动的时候，RunLoop的Mode会自动切换成UITrackingRunLoopMode模式，因此timer失效，当停止滑动，RunLoop又会切换回NSDefaultRunLoopMode模式，因此timer又会重新启动了
+
+    // 2. 当我们将timer添加到UITrackingRunLoopMode模式中，此时只有我们在滑动textField时timer才会运行
+    // [[NSRunLoop mainRunLoop] addTimer:timer forMode:UITrackingRunLoopMode];
+
+    // 3. 那个如何让timer在两个模式下都可以运行呢？
+    // 3.1 在两个模式下都添加timer 是可以的，但是timer添加了两次，并不是同一个timer
+    // 3.2 使用站位的运行模式 NSRunLoopCommonModes标记，凡是被打上NSRunLoopCommonModes标记的都可以运行，下面两种模式被打上标签
+    //0 : <CFString 0x10b7fe210 [0x10a8c7a40]>{contents = "UITrackingRunLoopMode"}
+    //2 : <CFString 0x10a8e85e0 [0x10a8c7a40]>{contents = "kCFRunLoopDefaultMode"}
+    // 因此也就是说如果我们使用NSRunLoopCommonModes，timer可以在UITrackingRunLoopMode，kCFRunLoopDefaultMode两种模式下运行
+    [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+    NSLog(@"%@",[NSRunLoop mainRunLoop]);
+}
+-(void)show
+{
+    NSLog(@"-------");
+}
+```
+
+由上述代码可以看出，NSTimer不管用是因为Mode的切换，因为如果我们在主线程使用定时器，此时RunLoop的Mode为kCFRunLoopDefaultMode，即定时器属于kCFRunLoopDefaultMode，那么此时我们滑动ScrollView时，RunLoop的Mode会切换到UITrackingRunLoopMode，因此在主线程的定时器就不在管用了，调用的方法也就不再执行了，当我们停止滑动时，RunLoop的Mode切换回kCFRunLoopDefaultMode，所有NSTimer就又管用了。
+
+使用GCD也可以创建计时器，而且更为精确：
+
+```objective-c
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    //创建队列
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    //1.创建一个GCD定时器
+    /*
+     第一个参数:表明创建的是一个定时器
+     第四个参数:队列
+     */
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    // 需要对timer进行强引用，保证其不会被释放掉，才会按时调用block块
+    // 局部变量，让指针强引用
+    self.timer = timer;
+    //2.设置定时器的开始时间,间隔时间,精准度
+    /*
+     第1个参数:要给哪个定时器设置
+     第2个参数:开始时间
+     第3个参数:间隔时间
+     第4个参数:精准度 一般为0 在允许范围内增加误差可提高程序的性能
+     GCD的单位是纳秒 所以要*NSEC_PER_SEC
+     */
+    dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+
+    //3.设置定时器要执行的事情
+    dispatch_source_set_event_handler(timer, ^{
+        NSLog(@"---%@--",[NSThread currentThread]);
+    });
+    // 启动
+    dispatch_resume(timer);
+}
+```
+
+### 7.2 CFRunLoopSourceRef
+
+Source分为两种：
+
+Source0：非基于Port的 用于用户主动触发的事件（点击button 或点击屏幕）
+Source1：基于Port的 通过内核和其他线程相互发送消息（与内核相关）
+注意：Source1在处理的时候会分发一些操作给Source0去处理
+
+### 7.3 CFRunLoopObserverRef
+
+CFRunLoopObserverRef是观察者，能够监听RunLoop的状态改变。
+我们直接来看代码，给RunLoop添加监听者，监听其运行状态：
+
+
+``` objective-c
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+     //创建监听者
+     /*
+     第一个参数 CFAllocatorRef allocator：分配存储空间 CFAllocatorGetDefault()默认分配
+     第二个参数 CFOptionFlags activities：要监听的状态 kCFRunLoopAllActivities 监听所有状态
+     第三个参数 Boolean repeats：YES:持续监听 NO:不持续
+     第四个参数 CFIndex order：优先级，一般填0即可
+     第五个参数 ：回调 两个参数observer:监听者 activity:监听的事件
+     */
+     /*
+     所有事件
+     typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
+     kCFRunLoopEntry = (1UL << 0),   //   即将进入RunLoop
+     kCFRunLoopBeforeTimers = (1UL << 1), // 即将处理Timer
+     kCFRunLoopBeforeSources = (1UL << 2), // 即将处理Source
+     kCFRunLoopBeforeWaiting = (1UL << 5), //即将进入休眠
+     kCFRunLoopAfterWaiting = (1UL << 6),// 刚从休眠中唤醒
+     kCFRunLoopExit = (1UL << 7),// 即将退出RunLoop
+     kCFRunLoopAllActivities = 0x0FFFFFFFU
+     };
+     */
+    CFRunLoopObserverRef observer = CFRunLoopObserverCreateWithHandler(CFAllocatorGetDefault(), kCFRunLoopAllActivities, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
+        switch (activity) {
+            case kCFRunLoopEntry:
+                NSLog(@"RunLoop进入");
+                break;
+            case kCFRunLoopBeforeTimers:
+                NSLog(@"RunLoop要处理Timers了");
+                break;
+            case kCFRunLoopBeforeSources:
+                NSLog(@"RunLoop要处理Sources了");
+                break;
+            case kCFRunLoopBeforeWaiting:
+                NSLog(@"RunLoop要休息了");
+                break;
+            case kCFRunLoopAfterWaiting:
+                NSLog(@"RunLoop醒来了");
+                break;
+            case kCFRunLoopExit:
+                NSLog(@"RunLoop退出了");
+                break;
+
+            default:
+                break;
+        }
+    });
+
+    // 给RunLoop添加监听者
+    /*
+     第一个参数 CFRunLoopRef rl：要监听哪个RunLoop,这里监听的是主线程的RunLoop
+     第二个参数 CFRunLoopObserverRef observer 监听者
+     第三个参数 CFStringRef mode 要监听RunLoop在哪种运行模式下的状态
+     */
+    CFRunLoopAddObserver(CFRunLoopGetCurrent(), observer, kCFRunLoopDefaultMode);
+     /*
+     CF的内存管理（Core Foundation）
+     凡是带有Create、Copy、Retain等字眼的函数，创建出来的对象，都需要在最后做一次release
+     GCD本来在iOS6.0之前也是需要我们释放的，6.0之后GCD已经纳入到了ARC中，所以我们不需要管了
+     */
+    CFRelease(observer);
+}
+```
 
 
