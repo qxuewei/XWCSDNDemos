@@ -407,5 +407,6 @@ CFRunLoopObserverRef是观察者，能够监听RunLoop的状态改变。
     CFRelease(observer);
 }
 ```
-
+ 运行结果：
+ ![结果](https://raw.githubusercontent.com/qxuewei/XWCSDNDemos/master/Images/runloop2.png)
 
