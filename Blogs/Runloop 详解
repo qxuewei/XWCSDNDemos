@@ -1,0 +1,171 @@
+# Runloop
+## 1. 概述
+一般来说，一个线程只能执行一个任务，执行完就会退出，如果我们需要一种机制，让线程能随时处理时间但并不退出，那么 RunLoop 就是这样的一个机制。Runloop是事件接收和分发机制的一个实现。
+
+RunLoop实际上是一个对象，这个对象在循环中用来处理程序运行过程中出现的各种事件（比如说触摸事件、UI刷新事件、定时器事件、Selector事件），从而保持程序的持续运行；而且在没有事件处理的时候，会进入睡眠模式，从而节省CPU资源，提高程序性能。
+
+简单的说run loop是事件驱动的一个大循环，如下代码所示：
+
+```objective-c
+int main(int argc, char * argv[]) {
+     //程序一直运行状态
+     while (AppIsRunning) {
+          //睡眠状态，等待唤醒事件
+          id whoWakesMe = SleepForWakingUp();
+          //得到唤醒事件
+          id event = GetEvent(whoWakesMe);
+          //开始处理事件
+          HandleEvent(event);
+     }
+     return 0;
+}
+```
+
+## 2. Runloop 基本作用
+
+### 2.1 保持程序持续运行
+程序一启动就会开一个主线程，主线程一开起来就会跑一个主线程对应的Runloop, Runloop保证主线程不会被销毁，也就保证了程序的持续运行。不光iOS，在其他的编程平台，Android, Windows等都有一个类似Runloop的机制保证程序的持续运行。
+
+### 2.2 处理App中的各类事件
+
+#### 系统级别
+GCD, mach kernel, block, pthread
+
+#### 应用层
+NSTimer, UIEvent, Autorelease, NSObject(NSDelayedPerforming), NSObject(NSThreadPerformAddition), CADisplayLink, CATransition, CAAnimation, dispatch_get_main_queue() (GCD 中dispatch到main queue的block会被dispatch到main Runloop中执行)， NSPort, NSURLConnection, AFNetworking（这个第三方网络请求框架使用在开启新线程中添加自己到Runloop监听事件）
+
+### 2.3 节省CPU资源，提高程序性能
+程序运行起来时，当什么操作都没有做的时候，Runloop告诉CPU, 现在没有事情做，我要去休息， 这时CPU就会将资源释放出来去做其他的事情，当有事情做的时候Runloop就会立马起来去做事情。
+
+## 3. Runloop 的开启
+
+#### 程序入口
+iOS 程序的入口是 main 函数
+
+``` objective-c
+int main(int argc, char * argv[]) {
+    @autoreleasepool {
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    }
+}
+```
+程序主线程一开起来，就会跑一个和主线程对应的Runloop, 那么Runloop一定是在程序的入口main函数中开启。
+
+#### 在main thread 堆栈中所处的位置
+堆栈最底层是start(dyld)，往上依次是main，UIApplication(main.m) -> GSEventRunModal(Graphic Services) -> RunLoop(包含CFRunLoopRunSpecific，__CFRunLoopRun，__CFRunLoopDoSouces0，CFRUNLOOP_IS_CALLING_OUT_TO_A_SOURCE0_PERFORM_FUNCTION) -> Handle Touch Event
+
+## 4. Runloop 原理
+
+CFRunLoop开源代码：http://opensource.apple.com/source/CF/CF-855.17/
+
+Runloop 源码：
+
+``` objective-c
+void CFRunLoopRun(void) {	/* DOES CALLOUT */
+    int32_t result;
+    do {
+        result = CFRunLoopRunSpecific(CFRunLoopGetCurrent(), kCFRunLoopDefaultMode, 1.0e10, false);
+        CHECK_FOR_FORK();
+    } while (kCFRunLoopRunStopped != result && kCFRunLoopRunFinished != result);
+}
+```
+
+我们发现RunLoop确实是do while通过判断result的值实现的。因此，我们可以把RunLoop看成一个死循环。如果没有RunLoop，UIApplicationMain函数执行完毕之后将直接返回，也就没有程序持续运行一说了。
+
+执行顺序的伪代码：
+
+```objective-c
+int32_t __CFRunLoopRun()
+{
+    // 通知即将进入runloop
+    __CFRunLoopDoObservers(KCFRunLoopEntry);
+    
+    do
+    {
+        // 通知将要处理timer和source
+        __CFRunLoopDoObservers(kCFRunLoopBeforeTimers);
+        __CFRunLoopDoObservers(kCFRunLoopBeforeSources);
+        
+        // 处理非延迟的主线程调用
+        __CFRunLoopDoBlocks();
+        // 处理Source0事件
+        __CFRunLoopDoSource0();
+        
+        if (sourceHandledThisLoop) {
+            __CFRunLoopDoBlocks();
+         }
+        /// 如果有 Source1 (基于port) 处于 ready 状态，直接处理这个 Source1 然后跳转去处理消息。
+        if (__Source0DidDispatchPortLastTime) {
+            Boolean hasMsg = __CFRunLoopServiceMachPort();
+            if (hasMsg) goto handle_msg;
+        }
+            
+        /// 通知 Observers: RunLoop 的线程即将进入休眠(sleep)。
+        if (!sourceHandledThisLoop) {
+            __CFRunLoopDoObservers(runloop, currentMode, kCFRunLoopBeforeWaiting);
+        }
+            
+        // GCD dispatch main queue
+        CheckIfExistMessagesInMainDispatchQueue();
+        
+        // 即将进入休眠
+        __CFRunLoopDoObservers(kCFRunLoopBeforeWaiting);
+        
+        // 等待内核mach_msg事件
+        mach_port_t wakeUpPort = SleepAndWaitForWakingUpPorts();
+        
+        // 等待。。。
+        
+        // 从等待中醒来
+        __CFRunLoopDoObservers(kCFRunLoopAfterWaiting);
+        
+        // 处理因timer的唤醒
+        if (wakeUpPort == timerPort)
+            __CFRunLoopDoTimers();
+        
+        // 处理异步方法唤醒,如dispatch_async
+        else if (wakeUpPort == mainDispatchQueuePort)
+            __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__()
+            
+        // 处理Source1
+        else
+            __CFRunLoopDoSource1();
+        
+        // 再次确保是否有同步的方法需要调用
+        __CFRunLoopDoBlocks();
+        
+    } while (!stop && !timeout);
+    
+    // 通知即将退出runloop
+    __CFRunLoopDoObservers(CFRunLoopExit);
+}
+```
+
+## 5. Runloop 对象
+
+RunLoop对象包括Fundation中的NSRunLoop对象和CoreFoundation中的CFRunLoopRef对象。因为Fundation框架是基于CFRunLoopRef的封装，因此我们学习RunLoop还是要研究CFRunLoopRef 源码。
+
+### 获得Runloop 对象
+
+```objective-c
+//Foundation
+[NSRunLoop currentRunLoop]; // 获得当前线程的RunLoop对象
+[NSRunLoop mainRunLoop]; // 获得主线程的RunLoop对象
+ 
+//Core Foundation
+CFRunLoopGetCurrent(); // 获得当前线程的RunLoop对象
+CFRunLoopGetMain(); // 获得主线程的RunLoop对象
+```
+
+值的注意的是子线程中的runloop不是默认开启的，需要手动开启，当调用 [NSRunLoop currentRunLoop] 时，若已存在当前线程的runloop返回，若不存在创建一个新的runloop对象再返回。
+
+## 6. Runloop 和 线程
+### 6.1 Runloop 和 线程 之间的关系
+
+1. 每条线程都有唯一的一个与之对应的Runloop 对象
+2. 主线程的Runloop已经自动创建好了，子线程的Runloop需要手动创建
+3. Runloop在第一次获取时创建，在线程结束时销毁
+4. Thread 包含一个CFRunloop, 一个CFRunloop 包含一种CFRunloopMode, model 包含 CFRunloopSource, CFRunloopTimer, CFRunloopObserver.
+
+
+
