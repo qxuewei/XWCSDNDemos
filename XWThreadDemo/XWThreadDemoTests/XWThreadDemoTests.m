@@ -29,6 +29,21 @@
     // Use XCTAssert and related functions to verify your tests produce the correct results.
 }
 
+- (void)testTongxin {
+    
+}
+
+- (void)testSemaphone {
+    dispatch_semaphore_t semaphore_t = dispatch_semaphore_create(1);
+    /// 线程1
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        /// 进入等待状态!
+        dispatch_semaphore_wait(semaphore_t, DISPATCH_TIME_FOREVER);
+        sleep(7);
+        dispatch_semaphore_signal(semaphore_t);
+    });
+}
+
 - (void)testNSLock {
     NSLock *lock = [[NSLock alloc] init];
     [lock lock];
