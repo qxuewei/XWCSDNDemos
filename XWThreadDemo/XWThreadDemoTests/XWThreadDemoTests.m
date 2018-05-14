@@ -29,6 +29,13 @@
     // Use XCTAssert and related functions to verify your tests produce the correct results.
 }
 
+- (void)testNSLock {
+    NSLock *lock = [[NSLock alloc] init];
+    [lock lock];
+    // 需要锁定的代码
+    [lock unlock];
+}
+
 - (void)testNSThread {
     /// 获取当前线程
     NSThread *currentThread = [NSThread currentThread];
