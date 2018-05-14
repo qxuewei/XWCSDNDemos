@@ -30,7 +30,14 @@
 }
 
 - (void)testTongxin {
+    dispatch_after(3.0, dispatch_get_main_queue(), ^{
+       /// 延时3秒执行的操作!
+    });
     
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        
+    });
 }
 
 - (void)testSemaphone {
