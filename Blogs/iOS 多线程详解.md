@@ -99,6 +99,13 @@ iOS开发的建议:
 
 其他的不常用的加锁操作不再赘述。
 
+##### 线程锁相关参考文章：
+[深入理解iOS开发中的锁](https://bestswifter.com/ios-lock/)
+[iOS 中几种常用的锁总结](https://www.jianshu.com/p/1e59f0970bf5)
+[iOS多线程-各种线程锁的简单介绍](https://www.jianshu.com/p/35dd92bcfe8c)
+
+
+
 ### 1.8 线程间通信
 
 
@@ -183,7 +190,7 @@ iOS开发的建议:
  - (void)main NS_AVAILABLE(10_5, 2_0);    // thread body metho
 ```
 
-### 2.2 GCD
+### 2.2 GCD 实现多线程
 首先关于同步，异步，并行，串行，一张图便可说清楚。
 ![同步异步](https://raw.githubusercontent.com/qxuewei/XWCSDNDemos/master/Images/%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E8%AF%B4%E6%98%8E.png)
 
@@ -323,9 +330,629 @@ dispatch_group_notify(group, dispatch_get_main_queue(), ^{
 });
 ```
 
-##### 附：参考文章：
-[深入理解iOS开发中的锁](https://bestswifter.com/ios-lock/)
-[iOS 中几种常用的锁总结](https://www.jianshu.com/p/1e59f0970bf5)
-[iOS多线程-各种线程锁的简单介绍](https://www.jianshu.com/p/35dd92bcfe8c)
+* GCD 定时器
 
+
+```object
+dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER,0, 0, DISPATCH_TARGET_QUEUE_DEFAULT);
+dispatch_source_set_event_handler(source, ^(){
+     NSLog(@"Time flies.");
+});
+dispatch_time_t start
+dispatch_source_set_timer(source, DISPATCH_TIME_NOW, 5ull * NSEC_PER_SEC,100ull * NSEC_PER_MSEC);
+self.source = source;
+dispatch_resume(self.source);
+```
+
+
+#### 2.2.4 GCD 自定义封装工具类
+[XWGCDManager in Github](https://github.com/qxuewei/XWGCDManager)
+
+```objective-c
+//
+//  XWGCDManager.h
+//  XWGCDManager
+//
+//  Created by 邱学伟 on 2017/3/3.
+//  Copyright © 2017年 邱学伟. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "XWGCDGroup.h"
+@interface XWGCDManager : NSObject
+/// 主线程执行
++ (void)executeInMainQueue:(dispatch_block_t)block;
+/// 默认异步线程执行
++ (void)executeInGlobalQueue:(dispatch_block_t)block;
+/// 高优先级异步线程执行
++ (void)executeInHighPriorityGlobalQueue:(dispatch_block_t)block;
+/// 低优先级异步线程执行
++ (void)executeInLowPriorityGlobalQueue:(dispatch_block_t)block;
+/// 后台优先级异步线程执行
++ (void)executeInBackgroundPriorityGlobalQueue:(dispatch_block_t)block;
+/// 主线程延时执行
++ (void)executeInMainQueue:(dispatch_block_t)block afterDelaySecs:(NSTimeInterval)sec;
+/// 默认异步线程延时执行
++ (void)executeInGlobalQueue:(dispatch_block_t)block afterDelaySecs:(NSTimeInterval)sec;
+/// 高优先级异步线程延时执行
++ (void)executeInHighPriorityGlobalQueue:(dispatch_block_t)block afterDelaySecs:(NSTimeInterval)sec;
+/// 低优先级异步线程延时执行
++ (void)executeInLowPriorityGlobalQueue:(dispatch_block_t)block afterDelaySecs:(NSTimeInterval)sec;
+/// 后台优先级异步线程延时执行
++ (void)executeInBackgroundPriorityGlobalQueue:(dispatch_block_t)block afterDelaySecs:(NSTimeInterval)sec;
+/// 当前是否在主线程
++ (BOOL)isMainQueue;
+/// 在线程组添加异步任务
+- (void)execute:(dispatch_block_t)block inGroup:(XWGCDGroup *)group;
+/// 监听某异步线程组中操作完成执行任务
+- (void)notify:(dispatch_block_t)block inGroup:(XWGCDGroup *)group;
+
++ (XWGCDManager *)mainQueue;
++ (XWGCDManager *)globalQueue;
++ (XWGCDManager *)highPriorityGlobalQueue;
++ (XWGCDManager *)lowPriorityGlobalQueue;
++ (XWGCDManager *)backgroundPriorityGlobalQueue;
+@end
+
+```
+
+### 2.3 NSOperation 实现多线程
+
+NSOperation是基于GCD的面向对象的使用OC语言的封装。相比GCD，NSOperation的使用更加简单。`NSOperation` 是一个抽象类，也就是说它并不能直接使用，而是应该使用它的子类。使用它的子类的方法有三种，使用苹果为我们提供的两个子类 `NSInvocationOperation`， `NSBlockOperation` 和自定义继承自NSOperation的子类。
+
+NSOperation的使用常常是配合NSOperationQueue来进行的。只要是使用 `NSOperation` 的子类创建的实例就能添加到 `NSOperationQueue` 操作队列之中，一旦添加到队列，操作就会自动异步执行（注意是异步）。如果没有添加到队列，而是使用 `start` 方法，则会在当前线程执行。
+
+我们知道，线程间的通信主要是主线程与分线程之间进行的。主线程到分线程，NSOperation子类也有相应带参数的方法；而分线程到主线程，比如更新UI，它也有很方便的获取主队列（被添加到主队列的操作默认会在主线程执行）的方法：`[NSOperationQueue mainQueue]`。
+
+#### 2.3.1 NSInvocationOperation
+
+在当前线程中运行：
+
+```object
+- (void)testNSOperation {
+    NSInvocationOperation *operation1 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(downloadMethod1:) object:@"url"];
+    [operation1 start];
+}
+- (void)downloadMethod1:(id)obj {
+    NSLog(@"object: %@ ++ 当前线程: %@",obj,[NSThread currentThread]);
+}
+```
+运行结果：
+
+```object
+(lldb) po [obj class]
+__NSCFConstantString
+
+2018-05-15 10:45:09.827562+0800 XWThreadDemo[3148:59049] object: url ++ 当前线程: <NSThread: 0x608000072600>{number = 1, name = main}
+```
+
+在异步线程中运行：
+
+```object
+- (void)testNSOperation {
+    NSInvocationOperation *operation1 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(downloadMethod1:) object:@"url"];
+    NSOperationQueue *queue1 = [[NSOperationQueue alloc] init];
+    [queue1 addOperation:operation1];
+}
+- (void)downloadMethod1:(id)obj {
+    NSLog(@"object: %@ ++ 当前线程: %@",obj,[NSThread currentThread]);
+}
+```
+运行结果：
+
+```object
+2018-05-15 10:47:15.889087+0800 XWThreadDemo[3226:62634] object: url ++ 当前线程: <NSThread: 0x60800027cb80>{number = 3, name = (null)}
+```
+
+#### 2.3.2 NSBlockOperation
+
+在不同异步线程添加多个执行方法
+
+```object
+- (void)testNSOperation1 {
+    NSLog(@"开始");
+    /// 创建操作队列
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    for (int i = 0; i < 10; i++) {
+        /// 异步操作
+        NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+            NSLog(@"线程:%@,  index: %d",[NSThread currentThread],i);
+        }];
+        /// 添加到队列中自动异步执行
+        [queue addOperation:blockOperation];
+    }
+    NSLog(@"结束");
+}
+```
+
+运行结果：
+
+```object
+2018-05-15 10:52:09.662844+0800 XWThreadDemo[3368:69422] 开始
+2018-05-15 10:52:09.663440+0800 XWThreadDemo[3368:69536] 线程:<NSThread: 0x604000478f80>{number = 4, name = (null)},  index: 2
+2018-05-15 10:52:09.663441+0800 XWThreadDemo[3368:69540] 线程:<NSThread: 0x600000269a80>{number = 3, name = (null)},  index: 0
+2018-05-15 10:52:09.663450+0800 XWThreadDemo[3368:69422] 结束
+2018-05-15 10:52:09.663468+0800 XWThreadDemo[3368:69535] 线程:<NSThread: 0x60c00007f980>{number = 5, name = (null)},  index: 3
+2018-05-15 10:52:09.663470+0800 XWThreadDemo[3368:69534] 线程:<NSThread: 0x604000479040>{number = 6, name = (null)},  index: 1
+2018-05-15 10:52:09.663514+0800 XWThreadDemo[3368:69533] 线程:<NSThread: 0x600000269ac0>{number = 7, name = (null)},  index: 4
+2018-05-15 10:52:09.663534+0800 XWThreadDemo[3368:69548] 线程:<NSThread: 0x600000269a40>{number = 8, name = (null)},  index: 5
+2018-05-15 10:52:09.663547+0800 XWThreadDemo[3368:69549] 线程:<NSThread: 0x604000479000>{number = 9, name = (null)},  index: 6
+2018-05-15 10:52:09.663566+0800 XWThreadDemo[3368:69550] 线程:<NSThread: 0x600000269a00>{number = 10, name = (null)},  index: 7
+2018-05-15 10:52:09.663613+0800 XWThreadDemo[3368:69551] 线程:<NSThread: 0x608000272900>{number = 11, name = (null)},  index: 8
+2018-05-15 10:52:09.663616+0800 XWThreadDemo[3368:69552Test Case '-[XWThreadDemoTests testNSOperation1]' passed (0.002 seconds).
+] 线程:<NSThread: 0x600000269b80>{number = 12, name = (null)},  index: 9
+```
+
+* 使用NSBlockOperation的语法糖
+
+```object
+- (void)testNSOperation2 {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperationWithBlock:^{
+        NSLog(@"异步执行");
+    }];
+}
+```
+
+* 线程中通信：
+
+```object
+- (void)testNSOperation3 {
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperationWithBlock:^{
+        NSLog(@"异步执行");
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            NSLog(@"回到主线程中执行!");
+        }];
+    }];
+}
+```
+
+#### 2.3.3 NSOperationQueue 的一些高级操作
+
+##### 1. 最大并发数
+
+
+```object
+queue.maxConcurrentOperationCount = 2;
+```
+##### 2. 添加线程依赖
+
+
+```objective-c
+- (void)testNSOperationDepend {
+    /// 定义三个异步操作
+    NSBlockOperation *operation1 = [NSBlockOperation blockOperationWithBlock:^{
+        sleep(1);
+        NSLog(@"operation1 - 当前线程:%@",[NSThread currentThread]);
+    }];
+    NSBlockOperation *operation2 = [NSBlockOperation blockOperationWithBlock:^{
+        sleep(5);
+        NSLog(@"operation2 - 当前线程:%@",[NSThread currentThread]);
+    }];
+    NSBlockOperation *operation3 = [NSBlockOperation blockOperationWithBlock:^{
+        sleep(3);
+        NSLog(@"operation3 - 当前线程:%@",[NSThread currentThread]);
+    }];
+    /// 定义主线程更新UI操作
+    NSBlockOperation *operationMain = [NSBlockOperation blockOperationWithBlock:^{
+        NSLog(@"operationMain - 更新UI - 当前线程:%@",[NSThread currentThread]);
+    }];
+    
+    /// 添加依赖
+    [operation1 addDependency:operation3];
+    [operation1 addDependency:operation2];
+    [operationMain addDependency:operation3];
+    
+    /// 异步线程添加异步队列
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperations:@[operation1,operation2,operation3] waitUntilFinished:YES];
+    
+    /// 刷新UI添加主线程队列
+    [[NSOperationQueue mainQueue] addOperation:operationMain];
+}
+```
+输出：
+
+```object
+Test Case '-[XWThreadDemoTests testNSOperationDepend]' started.
+2018-05-15 11:10:44.389619+0800 XWThreadDemo[3825:89159] operation3 - 当前线程:<NSThread: 0x608000265f00>{number = 3, name = (null)}
+2018-05-15 11:10:46.386336+0800 XWThreadDemo[3825:89156] operation2 - 当前线程:<NSThread: 0x60400026a840>{number = 4, name = (null)}
+2018-05-15 11:10:47.389426+0800 XWThreadDemo[3825:89156] operation1 - 当前线程:<NSThread: 0x60400026a840>{number = 4, name = (null)}
+2018-05-15 11:10:47.394948+0800 XWThreadDemo[3825:89109] operationMain - 更新UI - 当前线程:<NSThread: 0x60c0000796c0>{number = 1, name = main}
+```
+
+##### 3. 线程挂起
+
+
+```object
+- (void)testNSOperationSuspended {
+    //判断操作的数量，当前队列里面是不是有操作？
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    if (queue.operationCount == 0) {
+        NSLog(@"当前队列没有操作");
+        return;
+    }
+    
+    queue.suspended = !queue.isSuspended;
+    if (queue.suspended) {
+        NSLog(@"暂停");
+        
+    }else{
+        NSLog(@"继续");
+    }
+}
+```
+暂停继续(对队列的暂停和继续)，挂起的是队列，不会影响已经在执行的操作
+
+##### 4. 取消队列中所有操作
+
+
+```object 
+- (void)testNSOperationCancel {
+    //只能取消所有队列的里面的操作，正在执行的无法取消
+    //取消操作并不会影响队列的挂起状态
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue cancelAllOperations];
+    NSLog(@"取消队列里所有的操作");
+    //取消队列的挂起状态
+    //（只要是取消了队列的操作，我们就把队列处于不挂起状态,以便于后续的开始）
+    queue.suspended = NO;
+}
+```
+取消所有队列的里面的操作，正在执行的无法取消
+
+
+### 3 多线程实战
+#### 3.1 输出一百万个数字中最大值和最小值
+* pthread
+
+```objective-c
+//
+//  main.m
+//  XWThreadDemo
+//
+//  Created by 邱学伟 on 2018/5/14.
+//  Copyright © 2018年 邱学伟. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "AppDelegate.h"
+#import <pthread.h>
+
+struct threadInfo {
+    uint32_t * inputValues;
+    size_t count;
+};
+
+struct threadResult {
+    uint32_t min;
+    uint32_t max;
+};
+
+void * findMinAndMax(void *arg) {
+    struct threadInfo const * const info = (struct threadInfo *) arg;
+    uint32_t min = UINT32_MAX;
+    uint32_t max = 0;
+    for (size_t i = 0; i < info -> count; i++) {
+        uint32_t value = info -> inputValues[i];
+        min = MIN(min, value);
+        max = MAX(max, value);
+    }
+    free(arg);
+    struct threadResult * const result = (struct threadResult *) malloc(sizeof( * result));
+    result -> min = min;
+    result -> max = max;
+    return result;
+}
+
+int main(int argc, char * argv[]) {
+        size_t const count = 100000;
+        uint32_t inputValues[count];
+        // 填充随机数字
+        for (size_t i = 0; i < count; i++) {
+            inputValues[i] = arc4random();
+        }
+        
+        // 开启4个寻找最大最小值的线程
+        size_t threadCount = 4;
+        pthread_t threads[threadCount];
+        for (size_t i = 0; i < threadCount; i++) {
+            struct threadInfo * const info = (struct threadInfo *)malloc(sizeof(*info));
+            size_t offset = (count / threadCount) * i;
+            info -> inputValues = inputValues + offset;
+            info -> count = MIN(count - offset, count / threadCount);
+            int error = pthread_create(threads + i, NULL, &findMinAndMax, info);
+            NSCAssert(error == 0, @"pthread_create() failed: %d", error);
+        }
+        
+        // 等待线程退出
+        struct threadResult * results[threadCount];
+        for (size_t i = 0; i < threadCount; i++) {
+            int error = pthread_join(threads[i], (void **) &(results[i]));
+            NSCAssert(error == 0, @"pthread_join() failed: %d", error);
+        }
+        
+        // 寻找min 和 max
+        uint32_t min = UINT32_MAX;
+        uint32_t max = 0;
+        for (size_t i = 0; i < threadCount; i++) {
+            min = MIN(min, results[i] -> min);
+            max = MAX(max, results[i] -> max);
+            free(results[i]);
+            results[i] = NULL;
+        }
+        NSLog(@"最小值: %u",min);
+        NSLog(@"最大值: %u",max);
+    return 0;
+}
+
+```
+输出：
+
+```object
+2018-05-15 14:04:54.347292+0800 XWThreadDemo[8078:249234] 最小值: 30715
+2018-05-15 14:04:54.348308+0800 XWThreadDemo[8078:249234] 最大值: 4294961465
+```
+
+* NSThread
+
+
+```objective-c
+//
+//  ViewController.m
+//  XWThreadDemo
+//
+//  Created by 邱学伟 on 2018/5/14.
+//  Copyright © 2018年 邱学伟. All rights reserved.
+//
+
+#import "ViewController.h"
+
+@interface XWFindMinAndMaxThread : NSThread
+@property (nonatomic, assign) NSUInteger min;
+@property (nonatomic, assign) NSUInteger max;
+- (instancetype)initWithNumbers:(NSArray <NSNumber *>*)numbers;
+@end
+@implementation XWFindMinAndMaxThread {
+    NSArray <NSNumber *> *_numbers;
+}
+- (instancetype)initWithNumbers:(NSArray *)numbers {
+    if (self = [super init]) {
+        _numbers = numbers;
+        [self work];
+    }
+    return self;
+}
+- (void)work {
+    NSUInteger max = 0;
+    NSUInteger min = NSUIntegerMax;
+    for (NSNumber *number in _numbers) {
+        max = MAX(max, number.unsignedIntegerValue);
+        min = MIN(min, number.unsignedIntegerValue);
+    }
+    self.min = min;
+    self.max = max;
+}
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    
+    NSMutableArray *numberArrayM = [NSMutableArray array];
+    NSUInteger count = 100000;
+    /// 模拟10000个随机数
+    for (NSUInteger i = 0; i < count; i++) {
+        [numberArrayM addObject:[NSNumber numberWithUnsignedInteger:arc4random()]];
+    }
+    
+    NSMutableArray <XWFindMinAndMaxThread *> *threads = [NSMutableArray array];
+    NSUInteger threadCount = 4;
+    NSUInteger numberCount = numberArrayM.count;
+    
+    for (NSUInteger i = 0; i < threadCount; i++) {
+        NSUInteger offset = (numberCount / threadCount) * i;
+        NSUInteger count = MIN(numberCount - offset, numberCount / threadCount);
+        NSRange range = NSMakeRange(offset, count);
+        NSArray *subSet = [numberArrayM subarrayWithRange:range];
+        XWFindMinAndMaxThread *findThread = [[XWFindMinAndMaxThread alloc] initWithNumbers:subSet];
+        [threads addObject:findThread];
+        [findThread start];
+    }
+    
+    NSUInteger max = 0;
+    NSUInteger min = NSUIntegerMax;
+    for (NSUInteger i = 0; i < threadCount; i++) {
+        max = MAX(max, threads[i].max);
+        min = MIN(min, threads[i].min);
+    }
+    
+    NSLog(@"最小值: %lu",(unsigned long)min);
+    NSLog(@"最大值: %lu",(unsigned long)max);
+}
+@end
+
+```
+输出：
+
+```objective-c
+2018-05-15 14:50:51.106993+0800 XWThreadDemo[9540:301745] 最小值: 13300
+2018-05-15 14:50:51.107075+0800 XWThreadDemo[9540:301745] 最大值: 4294951952
+```
+
+#### 3.2 使用 `Dispatch Barrier` 解决多线程并发读写同一个资源发生死锁
+
+```object
+- (void)testBarrierSetCount:(NSUInteger)count forKey:(NSString *)key {
+    key = [key copy];
+    dispatch_queue_t queue = dispatch_queue_create([@"BarrierQueue" UTF8String], DISPATCH_QUEUE_CONCURRENT);
+    dispatch_barrier_async(queue, ^{
+        if (count == 0) {
+            [self.dictM removeObjectForKey:key];
+        }else{
+            [self.dictM setObject:@(count) forKey:key];
+        }
+    });
+}
+```
+
+#### 3.3 使用 `dispatch_apply` 实现效率更高的for循环
+ * 普通 for 循环
+
+ 
+```object
+- (void)testCommonFor {
+    NSLog(@"普通for循环开启");
+    NSUInteger max = 10000;
+    for (NSUInteger i = 0; i < max; i++) {
+        for (NSUInteger j = 0; j < max; j++) {
+            /// 执行某操作
+        }
+    }
+    NSLog(@"普通for循环结束");
+}
+```
+执行时间：21.762 秒
+
+```
+Test Case '-[XWThreadDemoTests testCommonFor]' started.
+2018-05-15 17:14:20.215454+0800 XWThreadDemo[23816:496201] 普通for循环开启
+2018-05-15 17:14:41.976168+0800 XWThreadDemo[23816:496201] 普通for循环结束
+Test Case '-[XWThreadDemoTests testCommonFor]' passed (21.762 seconds).
+```
+* 循环
+
+
+```object
+- (void)testApplyFor {
+    NSLog(@" dispatch_apply 循环开启");
+    size_t max = 100000;
+    dispatch_queue_t queue = dispatch_queue_create([@"dispatch_apply" UTF8String], DISPATCH_QUEUE_CONCURRENT);
+    dispatch_apply(max, queue, ^(size_t i) {
+        dispatch_apply(max, queue, ^(size_t j) {
+            /// 执行某操作
+        });
+    });
+    NSLog(@" dispatch_apply 循环结束");
+}
+```
+执行时间：7.832 秒
+
+```
+Test Case '-[XWThreadDemoTests testApplyFor]' started.
+2018-05-15 17:15:51.990662+0800 XWThreadDemo[23881:498546]  dispatch_apply 循环开启
+2018-05-15 17:15:59.821032+0800 XWThreadDemo[23881:498546]  dispatch_apply 循环结束
+Test Case '-[XWThreadDemoTests testApplyFor]' passed (7.832 seconds).
+```
+
+`dispatch_apply` 实现的for循环有更高的效率！
+
+#### 3.4 使用 `dispatch_group_t` 追踪不同队列中的不同任务
+
+
+```objective-c
+- (void)testGCDGroup {
+    NSArray *urls = @[@"https://raw.githubusercontent.com/qxuewei/XWCSDNDemos/master/Images/sleepForTimeInterval.png",@"https://raw.githubusercontent.com/qxuewei/XWResources/master/images/threads.png",@"https://raw.githubusercontent.com/qxuewei/XWCSDNDemos/master/Images/sleepForTimeInterval.png"];
+    [self downloadImage:urls completion:^(NSArray<UIImage *> *images) {
+        NSLog(@"image数量:%lu - %@",(unsigned long)images.count,images);
+    }];
+}
+- (void)downloadImage:(NSArray <NSString *>*)urls completion:(void(^)(NSArray <UIImage *> *images))completion {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSMutableArray *imagesM = [NSMutableArray array];
+        dispatch_group_t group = dispatch_group_create();
+        for (NSString *url in urls) {
+            if (url.length == 0) {
+                continue;
+            }
+            
+            // 开启下载线程->
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                //dispatch_group_enter是通知dispatch group任务开始了，dispatch_group_enter和dispatch_group_leave是成对调用，不然程序就崩溃了。
+                dispatch_group_enter(group);
+                NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+                UIImage *image = [UIImage imageWithData:imageData];
+                if (image) {
+                    [imagesM addObject:image];
+                }
+                NSLog(@"当前下载线程:%@",[NSThread currentThread]);
+                // 保持和dispatch_group_enter配对。通知任务已经完成
+                dispatch_group_leave(group);
+            });
+        }
+        // 保持和dispatch_group_enter配对。通知任务已经完成
+        dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+        // 这里可以保证所有图片任务都完成，然后在main queue里加入完成后要处理的闭包，会在main queue里执行。
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completion) {
+                completion(imagesM.copy);
+            }
+        });
+    });
+}
+```
+运行结果：
+
+```object
+2018-05-15 17:34:47.265197+0800 XWThreadDemo[24470:522115] 当前下载线程:<NSThread: 0x600000270300>{number = 4, name = (null)}
+2018-05-15 17:34:48.738196+0800 XWThreadDemo[24470:522114] 当前下载线程:<NSThread: 0x608000269440>{number = 5, name = (null)}
+2018-05-15 17:34:49.446782+0800 XWThreadDemo[24470:522111] 当前下载线程:<NSThread: 0x604000072c40>{number = 3, name = (null)}
+2018-05-15 17:34:59.357622+0800 XWThreadDemo[24470:522022] image数量:3 - (
+    "<UIImage: 0x6040000b70a0>, {1260, 388}",
+    "<UIImage: 0x6080000b3320>, {1260, 388}",
+    "<UIImage: 0x6040000b7220>, {698, 348}"
+)
+```
+
+Demo2
+
+```objective-c
+- (void)testGCDGroup2 {
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    __block NSMutableArray <UIImage *> *images = [NSMutableArray array];
+    
+    dispatch_group_async(group, queue, ^(){
+        // 会处理一会
+        [images addObject:[self imageWithUrl:@"https://raw.githubusercontent.com/qxuewei/XWCSDNDemos/master/Images/sleepForTimeInterval.png"]];
+        NSLog(@"图片1线程 - %@",[NSThread currentThread]);
+    });
+    dispatch_group_async(group, queue, ^(){
+        // 处理一会儿
+        [images addObject:[self imageWithUrl:@"https://raw.githubusercontent.com/qxuewei/XWResources/master/images/threads.png"]];
+        NSLog(@"图片2线程 - %@",[NSThread currentThread]);
+    });
+    
+    // 上面的都搞定后这里会执行一次
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^(){
+        NSLog(@"image数量:%lu - %@",(unsigned long)images.count,images);
+    });
+}
+```
+运行结果：
+
+```object
+2018-05-15 17:48:36.616813+0800 XWThreadDemo[26394:540836] 图片2线程 - <NSThread: 0x600000273340>{number = 4, name = (null)}
+2018-05-15 17:48:38.395960+0800 XWThreadDemo[26394:540833] 图片1线程 - <NSThread: 0x6040002772c0>{number = 5, name = (null)}
+2018-05-15 17:48:38.396442+0800 XWThreadDemo[26394:540711] image数量:2 - (
+    "<UIImage: 0x6080002a6a80>, {698, 348}",
+    "<UIImage: 0x6040002a38a0>, {1260, 388}"
+)
+```
+
+#### 3.5 drawRect在后台绘制
+
+drawRect:方法会影响性能，所以可以放到后台执行。
+
+```object
+//使用UIGraphicsBeginImageContextWithOptions取代UIGraphicsGetCurrentContext:方法
+UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+// drawing code here
+UIImage *i = UIGraphicsGetImageFromCurrentImageContext();
+UIGraphicsEndImageContext();
+```
+
+###### 项目中演示Demo地址：
+[XWThreadDemo in Github](https://github.com/qxuewei/XWCSDNDemos/tree/master/XWThreadDemo)
 
