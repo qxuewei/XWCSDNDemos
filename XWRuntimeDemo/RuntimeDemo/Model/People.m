@@ -148,5 +148,15 @@ void functionForMethod (id self, SEL _cmd) {
     
 }
 
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    [super allocWithZone:zone];
+    if (!_defaultManager) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            _defaultManager = [super allocWithZone:zone];
+        });
+    }
+    return _defaultManager;
+}
 
 @end
