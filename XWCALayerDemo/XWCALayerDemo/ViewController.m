@@ -25,7 +25,34 @@ static const CGFloat cImageLayerWidth = 160.0;
     imageV.image = [UIImage imageNamed:@"cat"];
 //    [self setupLayer];
 //    [self setupImageLayer1];
-    [self setupImageLayer2];
+//    [self setupImageLayer2];
+    [self setupTextLayer];
+}
+
+- (void)setupTextLayer {
+    CATextLayer *textLayer = [[CATextLayer alloc] init];
+    textLayer.bounds = CGRectMake(0, 0, self.view.bounds.size.width, 20);
+    textLayer.position = self.view.center;
+    [self.view.layer addSublayer:textLayer];
+    
+    /// 很重要的属性设置-避免文本模糊显示
+    textLayer.contentsScale = [UIScreen mainScreen].scale;
+    
+    /// 文本属性
+    textLayer.string = @"这是一个文本Layer !! 吊不吊 !!";
+    
+    // 字体
+    UIFont *font = [UIFont systemFontOfSize:15.0];
+    CFStringRef fontStringRef = (__bridge CFStringRef)font.fontName;
+    CGFontRef fontRef = CGFontCreateWithFontName(fontStringRef);
+    textLayer.font = fontRef;
+    textLayer.fontSize = font.pointSize;
+    CGFontRelease(fontRef);
+    
+    /// 文本属性
+    textLayer.foregroundColor = [UIColor blackColor].CGColor;
+    textLayer.alignmentMode = kCAAlignmentCenter;
+    textLayer.wrapped = YES;
 }
 
 /// 圆角图层
