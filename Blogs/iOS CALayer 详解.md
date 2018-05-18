@@ -1,5 +1,5 @@
 # iOS CALayer 详解
-### Slogan : 可能是实战性最强的 CALayer 详细解析文章
+
 ## 1. 概述
 在iOS中，你能看得见摸得着的东西基本上都是UIView，比如一个按钮、一个文本标签、一个文本输入框、一个图标等等，这些都是UIView，其实UIView之所以能显示在屏幕上，完全是因为它内部的一个图层，在创建UIView对象时，UIView内部会自动创建一个图层(即CALayer对象)，通过UIView的layer属性可以访问这个层：
 
@@ -10,7 +10,7 @@
 当UIView需要显示到屏幕上时，会调用drawRect:方法进行绘图，并且会将所有内容绘制在自己的图层上，绘图完毕后，系统会将图层拷贝到屏幕上，于是就完成了UIView的显示, 在UIView中所有能够看到的内容都包含在layer中。
 
 ### CALayer 属性：
-![UIView和CALayer关系]()
+![UIView和CALayer关系](https://raw.githubusercontent.com/qxuewei/XWCSDNDemos/master/Images/calayer%E5%B1%9E%E6%80%A7s.png)
 
 ## 2.CALayer 演示
 ### 实现一个常规的 点击 放大缩小的 layer小动画 顺便熟悉layer常规属性：
