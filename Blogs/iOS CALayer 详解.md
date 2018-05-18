@@ -1,35 +1,59 @@
-//
-//  ViewController.m
-//  XWCALayerDemo
-//
-//  Created by 邱学伟 on 2018/5/16.
-//  Copyright © 2018年 邱学伟. All rights reserved.
-//
+# iOS CALayer 详解
+### Slogan : 可能是实战性最强的 CALayer 详细解析文章
+## 1. 概述
+在iOS中，你能看得见摸得着的东西基本上都是UIView，比如一个按钮、一个文本标签、一个文本输入框、一个图标等等，这些都是UIView，其实UIView之所以能显示在屏幕上，完全是因为它内部的一个图层，在创建UIView对象时，UIView内部会自动创建一个图层(即CALayer对象)，通过UIView的layer属性可以访问这个层：
 
-#import "ViewController.h"
+```object
+@property(nonatomic,readonly,strong)   CALayer  *layer;            
+// returns view's layer. Will always return a non-nil value. view is layer's delegate
+```    
+当UIView需要显示到屏幕上时，会调用drawRect:方法进行绘图，并且会将所有内容绘制在自己的图层上，绘图完毕后，系统会将图层拷贝到屏幕上，于是就完成了UIView的显示, 在UIView中所有能够看到的内容都包含在layer中。
 
-@interface ViewController () <CALayerDelegate> {
-    CALayer *_layer;
-    CALayer *_imageLayer;
-    __weak IBOutlet UIImageView *imageV;
+### CALayer 属性：
+![UIView和CALayer关系]()
+
+## 2.CALayer 演示
+### 实现一个常规的 点击 放大缩小的 layer小动画 顺便熟悉layer常规属性：
+
+```objective-c
+/// 普通layer
+- (void)setupLayer {
+    CALayer *layer = [[CALayer alloc] init];
+    _layer = layer;
+    [self.view.layer addSublayer:layer];
+    layer.backgroundColor = [UIColor redColor].CGColor;
+    layer.position = self.view.center;
+    layer.anchorPoint = CGPointMake(0, 0);
+    layer.bounds = CGRectMake(0, 0, cLayerWidth, cLayerWidth);
+    layer.cornerRadius = cLayerWidth * 0.5;
+    layer.shadowColor = [UIColor greenColor].CGColor;
+    layer.shadowOffset = CGSizeMake(2, 2);
+    layer.shadowOpacity = 0.6;
+    layer.borderColor = [UIColor blackColor].CGColor;
+    layer.borderWidth = 1.0;
+    layer.contents = (id)[UIImage imageNamed:@"cat"].CGImage;
 }
-
-@end
-
-@implementation ViewController
-static const CGFloat cLayerWidth = 60.0;
-static const CGFloat cImageLayerWidth = 160.0;
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    imageV.image = [UIImage imageNamed:@"cat"];
-//    [self setupLayer];
-//    [self setupImageLayer1];
-    [self setupImageLayer2];
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    UITouch *touch = touches.anyObject;
+    CGFloat w = _layer.bounds.size.width;
+    if (w == cLayerWidth) {
+        w = cLayerWidth * 4.0;
+    }else{
+        w = cLayerWidth;
+    }
+    _layer.bounds = CGRectMake(0, 0, w, w);
+    _layer.cornerRadius = w * 0.5;
+    _layer.position = [touch locationInView:self.view];
 }
+```
 
+### 圆角图片
+* 方案1：
+
+
+```objective-c
 /// 圆角图层
-- (void)setupImageLayer1 {
+- (void)setupImageLayer {
     CALayer *imageLayer = [CALayer layer];
     _imageLayer = imageLayer;
     [self.view.layer addSublayer:imageLayer];
@@ -56,7 +80,12 @@ static const CGFloat cImageLayerWidth = 160.0;
     imageLayer.borderWidth = 1.0;
     imageLayer.borderColor = [UIColor blackColor].CGColor;
 }
+```
 
+* 方案2：
+
+
+```objective-c
 /// 圆角图层2
 - (void)setupImageLayer2 {
     //边框
@@ -89,35 +118,6 @@ static const CGFloat cImageLayerWidth = 160.0;
     UIGraphicsEndImageContext();
     layer.contents = (id)newImage.CGImage;
 }
+```
 
-/// 普通layer
-- (void)setupLayer {
-    CALayer *layer = [[CALayer alloc] init];
-    _layer = layer;
-    [self.view.layer addSublayer:layer];
-    layer.backgroundColor = [UIColor redColor].CGColor;
-    layer.position = self.view.center;
-    layer.anchorPoint = CGPointMake(0, 0);
-    layer.bounds = CGRectMake(0, 0, cLayerWidth, cLayerWidth);
-    layer.cornerRadius = cLayerWidth * 0.5;
-    layer.shadowColor = [UIColor greenColor].CGColor;
-    layer.shadowOffset = CGSizeMake(2, 2);
-    layer.shadowOpacity = 0.6;
-    layer.borderColor = [UIColor blackColor].CGColor;
-    layer.borderWidth = 1.0;
-//    layer.contents = (id)[UIImage imageNamed:@"cat"].CGImage;
-}
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    UITouch *touch = touches.anyObject;
-    CGFloat w = _layer.bounds.size.width;
-    if (w == cLayerWidth) {
-        w = cLayerWidth * 4.0;
-    }else{
-        w = cLayerWidth;
-    }
-    _layer.bounds = CGRectMake(0, 0, w, w);
-    _layer.cornerRadius = w * 0.5;
-    _layer.position = [touch locationInView:self.view];
-}
 
-@end
