@@ -97,7 +97,7 @@ c ：常量
     [self.view addConstraint:b_consTop];
 ```
 最终效果：
-![屏幕快照 2018-05-24 下午2.18.54](http://p95ytk0ix.bkt.clouddn.com/2018-05-24-屏幕快照 2018-05-24 下午2.18.54.png)
+![屏幕快照 2018-05-24 下午3.46.26](http://p95ytk0ix.bkt.clouddn.com/2018-05-24-018-05-24_2.18.54.png)
 
 #### 2.3 添加约束的规则
 在创建约束之后，需要将其添加到作用的view上。
@@ -245,5 +245,9 @@ SuperView　　　　　　|
 }
 ```
 运行结果：
-![屏幕快照 2018-05-24 下午3.46.26](http://p95ytk0ix.bkt.clouddn.com/2018-05-24-屏幕快照 2018-05-24 下午3.46.26.png)
+![2018-05-24_3.46.26](http://p95ytk0ix.bkt.clouddn.com/2018-05-24-2018-05-24_3.46.26.png)
+
+
+
+#### 文中演示Demo 均已开源在 GitHub上，这是链接： [XWAutolayoutDemo In Github](https://github.com/qxuewei/XWCSDNDemos/tree/master/XWAutolayoutDemo)
 
