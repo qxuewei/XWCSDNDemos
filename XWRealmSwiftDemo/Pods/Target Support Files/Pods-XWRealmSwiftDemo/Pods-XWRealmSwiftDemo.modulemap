@@ -1,0 +1,6 @@
+framework module Pods_XWRealmSwiftDemo {
+  umbrella header "Pods-XWRealmSwiftDemo-umbrella.h"
+
+  export *
+  module * { export * }
+}
