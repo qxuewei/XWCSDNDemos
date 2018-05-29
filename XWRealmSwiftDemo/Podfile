@@ -5,7 +5,13 @@ target 'XWRealmSwiftDemo' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
 
-  # Pods for XWRealmSwiftDemo
-  pod 'RealmSwift'
+	pod 'Realm'
+	pod 'RealmSwift'
+
+  target 'XWRealmSwiftDemoTests' do
+    inherit! :search_paths
+	pod 'Realm'
+	pod 'RealmSwift'
+  end
 
 end
