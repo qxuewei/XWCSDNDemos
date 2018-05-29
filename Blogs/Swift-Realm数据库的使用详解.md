@@ -5,6 +5,8 @@
 ## 1. 概述
 [Realm](https://github.com/realm/realm-cocoa/) 是一个跨平台的移动数据库引擎，其性能要优于 Core Data 和 FMDB - [移动端数据库性能比较](https://realm.io/blog/introducing-realm/#fast), 我们可以在 [Android 端 realm-java](https://github.com/realm/realm-java)，iOS端:[Realm-Cocoa](https://github.com/realm/realm-cocoa/)，同时支持 OC 和 Swift两种语言开发。其使用简单，免费，性能优异，跨平台的特点广受程序员GG喜爱。
 
+[Realm 中文文档](https://realm.io/cn/docs/swift/latest/)
+
 ### Realm 支持如下属性的存储
 
 * Int，Int8，Int16，Int32 和 Int64
@@ -39,7 +41,7 @@
 
 ## 2. Realm 使用
 
-### 2.0 首先定义模型
+### 2.0 定义模型
 ``` objective-c
 import UIKit
 import RealmSwift
@@ -54,25 +56,12 @@ class Student: Object {
     @objc dynamic var photo : NSData?  = nil
 }
 
-extension Student {
-    /// 头像赋值
-    public func setPhotoWitName(_ imageName : String) -> Void {
-        let image = UIImage(named: imageName);
-        guard image == nil else {
-            self.photo = (UIImagePNGRepresentation(image!)! as NSData)
-            return
-        }
-    }
-    
-    /// 获取头像
-    public func getPhotoImage() -> UIImage? {
-        return UIImage(data: self.photo! as Data);
-    }
-}
 ```
 
 需要注意的是：
 ##### 在使用Realm中存储的数据模型都要是 `Object` 类的子类。
+
+#### 设置主键
 
 ### 2.1 增
 
@@ -129,10 +118,9 @@ extension XWRealmTool {
 效果：
 ![Snip20180529_13](http://p95ytk0ix.bkt.clouddn.com/2018-05-29-Snip20180529_13.png)
 
-#### 测试在数据库中插入一条带头像数据的模型
-
 
 #### 2.2 查
+#### 查询数据库中所有
 
 
 

@@ -19,12 +19,18 @@ class XWRealmTool: Object {
 }
 /// 增
 extension XWRealmTool {
-   
+    /// 保存一个Student
     public class func insertStudent(by student : Student) -> Void {
         let defaultRealm = self.getDB()
         try! defaultRealm.write {
             defaultRealm.add(student)
         }
         print(defaultRealm.configuration.fileURL ?? "")
+    }
+    
+    /// 获取 所保存的 Student
+    public class func getStudents() -> Results<Student> {
+        let defaultRealm = self.getDB()
+        return defaultRealm.objects(Student.self)
     }
 }

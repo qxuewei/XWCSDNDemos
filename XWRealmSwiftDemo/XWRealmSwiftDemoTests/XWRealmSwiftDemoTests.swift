@@ -22,6 +22,16 @@ class XWRealmSwiftDemoTests: XCTestCase {
         super.tearDown()
     }
     
+    /// 保存头像数据
+    func testInsterPhotoStudent() {
+        let stu = Student()
+        stu.name = "极客学伟_带头像"
+        stu.age = 26
+        stu.id = 2;
+        stu.setPhotoWitName("cat")
+        XWRealmTool.insertStudent(by: stu)
+    }
+    
     func testInsterStudent() {
         let stu = Student()
         stu.name = "极客学伟"
