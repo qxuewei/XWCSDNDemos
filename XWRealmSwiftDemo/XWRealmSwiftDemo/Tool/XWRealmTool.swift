@@ -28,9 +28,28 @@ extension XWRealmTool {
         print(defaultRealm.configuration.fileURL ?? "")
     }
     
+    /// 保存一些Student
+    public class func insertStudents(by students : [Student]) -> Void {
+        let defaultRealm = self.getDB()
+        try! defaultRealm.write {
+            defaultRealm.add(students)
+        }
+        print(defaultRealm.configuration.fileURL ?? "")
+    }
+    
+}
+
+/// 查
+extension XWRealmTool {
     /// 获取 所保存的 Student
     public class func getStudents() -> Results<Student> {
         let defaultRealm = self.getDB()
         return defaultRealm.objects(Student.self)
+    }
+    
+    /// 获取 指定id (主键) 的 Student
+    public class func getStudent(from id : Int) -> Student? {
+        let defaultRealm = self.getDB()
+        return defaultRealm.object(ofType: Student.self, forPrimaryKey: id)
     }
 }

@@ -13,10 +13,18 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        return
         let stus = XWRealmTool.getStudents()
         for stu in stus {
             print(stu.name)
+            if stu.photo != nil {
+                self.imageV.image = stu.getPhotoImage()
+            }
+            if stu.books.count > 0 {
+                for book in stu.books {
+                    print(book.name + "+" + book.author)
+                }
+            }
         }
         
     }
