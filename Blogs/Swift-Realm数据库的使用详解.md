@@ -2,12 +2,14 @@
 
 ![mobileDB_realm](http://p95ytk0ix.bkt.clouddn.com/2018-05-28-mobileDB_realm.png)
 
-## 1. 概述
+## 概述
 [Realm](https://github.com/realm/realm-cocoa/) 是一个跨平台的移动数据库引擎，其性能要优于 Core Data 和 FMDB - [移动端数据库性能比较](https://realm.io/blog/introducing-realm/#fast), 我们可以在 [Android 端 realm-java](https://github.com/realm/realm-java)，iOS端:[Realm-Cocoa](https://github.com/realm/realm-cocoa/)，同时支持 OC 和 Swift两种语言开发。其使用简单，免费，性能优异，跨平台的特点广受程序员GG喜爱。
 
 [Realm 中文文档](https://realm.io/cn/docs/swift/latest/)
 
-### Realm 支持如下属性的存储
+##### 本文将结合一些实战演练讲解 Realm 的用法，干货满满！
+
+#### Realm 支持如下属性的存储
 
 * Int，Int8，Int16，Int32 和 Int64
 * Boolean 、 Bool
@@ -34,15 +36,40 @@
 | LinkingObjects|	let value = LinkingObjects(fromType: Class.self, property: "property") |	必须是非可选值|
 
 
-### Realm 安装 - 使用 CocoaPods
+#### Realm 安装 - 使用 CocoaPods
 
 `pod 'RealmSwift'`
 `pod 'Realm'`
 
-## 2. Realm 使用
-本文将结合一些实战演练讲解 Realm 的用法，干货满满！
 
-### 2.0 定义模型
+
+#### Realm 配置
+
+* 将以下代码写在 AppDelegate 的 didFinishLaunchingWithOptions 方法中，这个方法主要用于数据模型属性增加或删除时的数据迁移，每次模型属性变化时，将 dbVersion 加 1 即可，Realm 会自行检测新增和需要移除的属性，然后自动更新硬盘上的数据库架构，移除属性的数据将会被删除。
+
+```objective-c
+/// 配置数据库
+    public class func configRealm() {
+        /// 如果要存储的数据模型属性发生变化,需要配置当前版本号比之前大
+        let dbVersion : UInt64 = 2
+        let docPath = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)[0] as String
+        let dbPath = docPath.appending("/defaultDB.realm")
+        let config = Realm.Configuration(fileURL: URL.init(string: dbPath), inMemoryIdentifier: nil, syncConfiguration: nil, encryptionKey: nil, readOnly: false, schemaVersion: dbVersion, migrationBlock: { (migration, oldSchemaVersion) in
+            
+        }, deleteRealmIfMigrationNeeded: false, shouldCompactOnLaunch: nil, objectTypes: nil)
+        Realm.Configuration.defaultConfiguration = config
+        Realm.asyncOpen { (realm, error) in
+            if let _ = realm {
+                print("Realm 服务器配置成功!")
+            }else if let error = error {
+                print("Realm 数据库配置失败：\(error.localizedDescription)")
+            }
+        }
+    }
+```
+
+
+## 定义模型
 ``` objective-c
 import UIKit
 import RealmSwift
@@ -87,7 +114,7 @@ class Student: Object {
 
 ```
 
-##### 需要注意的是：在使用Realm中存储的数据模型都要是 `Object` 类的子类。
+#### 需要注意的是：在使用Realm中存储的数据模型都要是 `Object` 类的子类。
 
 #### 1) 设置主键 - primaryKey
 重写 Object.primaryKey() 可以设置模型的主键。
@@ -136,7 +163,7 @@ List 中可以包含简单类型的 Object，表面上和可变的 Array 非常�
 ```
 
 
-### 1 增
+## 1 增
 
 #### 1.1 需求： 插入 1 名学生信息到本地数据库？
 
@@ -264,7 +291,7 @@ extension XWStudentRealmTool {
 ![Snip20180530_22](http://p95ytk0ix.bkt.clouddn.com/2018-05-30-Snip20180530_22.png)
 
 
-### 2 查
+## 2 查
 #### 2.1 普通查询： 查询数据库中所有学生模型并输出姓名，图片，所拥有的书信息
 
 ```objective-c
@@ -367,7 +394,7 @@ let stus = realm.objects(Student.self).sorted(byKeyPath: "id", ascending: false)
 
 ```
 
-### 3 改
+## 3 改
 
 #### 3.1 主键更新 - 更新单个学生
 ```objective-c
@@ -440,7 +467,7 @@ let stus = realm.objects(Student.self).sorted(byKeyPath: "id", ascending: false)
 演示结果：
 ![Snip20180530_32](http://p95ytk0ix.bkt.clouddn.com/2018-05-30-Snip20180530_32.png)
 
-### 4 删
+## 4 删
 
 ```objective-c
      /// 删除单个 Student
@@ -484,5 +511,5 @@ let stus = realm.objects(Student.self).sorted(byKeyPath: "id", ascending: false)
  
 #### 空空如也
 
- 文中所有演示代码 -> [XWRealmSwiftDemo In Github]()
+ 文中所有演示代码 -> [XWRealmSwiftDemo In Github](https://github.com/qxuewei/XWCSDNDemos/tree/master/XWRealmSwiftDemo)
 

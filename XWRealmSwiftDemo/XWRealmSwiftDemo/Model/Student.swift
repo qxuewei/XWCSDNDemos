@@ -32,6 +32,8 @@ class Student: Object {
     @objc dynamic var birthday : NSDate? = nil
     @objc dynamic var photo : NSData?  = nil
     @objc dynamic var tempID : String?  = nil
+    @objc dynamic var tempID2 : String?  = nil
+    @objc dynamic var groupName : String?  = nil
     
     //List 用来表示一对多的关系：一个 Student 中拥有多个 Book。
     let books = List<Book>()

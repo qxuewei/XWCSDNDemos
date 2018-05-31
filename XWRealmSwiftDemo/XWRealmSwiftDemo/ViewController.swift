@@ -13,8 +13,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        return
-        let stus = XWRealmTool.getStudents()
+        let stus = XWStudentRealmTool.getStudents()
         for stu in stus {
             print(stu.name)
             if stu.photo != nil {

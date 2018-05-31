@@ -15,7 +15,6 @@
 		DE1F150220BD3DF100A77FA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE1F150120BD3DF100A77FA2 /* Assets.xcassets */; };
 		DE1F150520BD3DF100A77FA2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE1F150320BD3DF100A77FA2 /* LaunchScreen.storyboard */; };
 		DE1F151020BD3DF100A77FA2 /* XWRealmSwiftDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1F150F20BD3DF100A77FA2 /* XWRealmSwiftDemoTests.swift */; };
-		DE1F151E20BD3F1900A77FA2 /* XWRealmTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1F151B20BD3F1900A77FA2 /* XWRealmTool.swift */; };
 		DE1F151F20BD3F1900A77FA2 /* Student.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1F151D20BD3F1900A77FA2 /* Student.swift */; };
 		DE88D54F20BE8A5000312212 /* XWStudentRealmTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE88D54E20BE8A5000312212 /* XWStudentRealmTool.swift */; };
 /* End PBXBuildFile section */
@@ -44,7 +43,6 @@
 		DE1F150B20BD3DF100A77FA2 /* XWRealmSwiftDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = XWRealmSwiftDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE1F150F20BD3DF100A77FA2 /* XWRealmSwiftDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XWRealmSwiftDemoTests.swift; sourceTree = "<group>"; };
 		DE1F151120BD3DF100A77FA2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DE1F151B20BD3F1900A77FA2 /* XWRealmTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XWRealmTool.swift; sourceTree = "<group>"; };
 		DE1F151D20BD3F1900A77FA2 /* Student.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Student.swift; sourceTree = "<group>"; };
 		DE88D54E20BE8A5000312212 /* XWStudentRealmTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XWStudentRealmTool.swift; sourceTree = "<group>"; };
 		E033D71DC3213554E15C9F24 /* Pods-XWRealmSwiftDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XWRealmSwiftDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XWRealmSwiftDemo/Pods-XWRealmSwiftDemo.debug.xcconfig"; sourceTree = "<group>"; };
@@ -139,7 +137,6 @@
 		DE1F151A20BD3F1900A77FA2 /* Tool */ = {
 			isa = PBXGroup;
 			children = (
-				DE1F151B20BD3F1900A77FA2 /* XWRealmTool.swift */,
 				DE88D54E20BE8A5000312212 /* XWStudentRealmTool.swift */,
 			);
 			path = Tool;
@@ -339,7 +336,6 @@
 			files = (
 				DE1F14FD20BD3DF000A77FA2 /* ViewController.swift in Sources */,
 				DE1F14FB20BD3DF000A77FA2 /* AppDelegate.swift in Sources */,
-				DE1F151E20BD3F1900A77FA2 /* XWRealmTool.swift in Sources */,
 				DE88D54F20BE8A5000312212 /* XWStudentRealmTool.swift in Sources */,
 				DE1F151F20BD3F1900A77FA2 /* Student.swift in Sources */,
 			);
