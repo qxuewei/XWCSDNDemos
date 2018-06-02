@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XWTest.h"
+#import <objc/runtime.h>
+#import <malloc/malloc.h>
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        XWTest *test = [[XWTest alloc] init];
-//        [test foo];
-        
-        [test unrecognizedTest];
+        NSObject *obj = [[NSObject alloc] init];
+        NSLog(@"%zd",malloc_size((__bridge const void *)obj));
     }
+    NSLog(@"%zd",class_getInstanceSize([obj class]));
     return 0;
 }
