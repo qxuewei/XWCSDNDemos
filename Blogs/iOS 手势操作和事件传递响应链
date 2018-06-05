@@ -1,7 +1,26 @@
-# iOS-手势操作和事件传递响应链
+# iOS 手势操作和事件传递响应链
 ## 概述
 iOS中的事件可以分为3大类型：触摸事件、加速计事件、远程控制事件。
 在我们点击屏幕的时候，iphone OS获取到了用户进行了“单击”这一行为，操作系统把包含这些点击事件的信息包装成UITouch和UIEvent形式的实例，然后找到当前运行的程序，逐级寻找能够响应这个事件的对象，直到没有响应者响应。这一寻找的过程，被称作事件的响应链。
+
+## Hit-Test 机制
+当用户触摸(Touch)屏幕进行交互时，系统首先要找到响应者（Responder）。系统检测到手指触摸(Touch)操作时，将Touch 以UIEvent的方式加入UIApplication事件队列中。UIApplication从事件队列中取出最新的触摸事件进行分发传递到UIWindow进行处理。UIWindow 会通过hitTest:withEvent:方法寻找触碰点所在的视图，这个过程称之为hit-test view。
+hitTest 的顺序如下
+`UIApplication -> UIWindow -> Root View -> ··· -> subview`
+在顶级视图（Root View）上调用pointInside:withEvent:方法判断触摸点是否在当前视图内；
+
+如果返回NO，那么hitTest:withEvent:返回nil；
+
+如果返回YES，那么它会向当前视图的所有子视图发送hitTest:withEvent:消息，所有子视图的遍历顺序是从最顶层视图一直到到最底层视图，即从subviews数组的末尾向前遍历，直到有子视图返回非空对象或者全部子视图遍历完毕。
+
+如果有subview的hitTest:withEvent:返回非空对象则A返回此对象，处理结束（注意这个过程，子视图也是根据pointInside:withEvent:的返回值来确定是返回空还是当前子视图对象的。并且这个过程中如果子视图的hidden=YES、userInteractionEnabled=NO或者alpha小于0.1都会并忽略）；
+
+如果所有subview遍历结束仍然没有返回非空对象，则hitTest:withEvent:返回self；
+
+系统就是这样通过hit test找到触碰到的视图(Initial View)进行响应。
+
+![1306128-ec979c527e4f9252](http://p95ytk0ix.bkt.clouddn.com/2018-06-05-1306128-ec979c527e4f9252.png)
+
 
 ## UIResponder
 在iOS中不是任何对象都能处理事件，只有继承了UIResponder的对象才能接收并处理事件。我们称之为“响应者对象”，UIApplication、UIViewController、UIView都继承自UIResponder，因此它们都是响应者对象，都能够接收并处理事件。
@@ -332,4 +351,9 @@ typedef NS_ENUM(NSInteger, UIGestureRecognizerState) {
     [rotation setRotation:0.0];
 }
 ```
+
+#### 演示代码  [XWTouchResponderDemo](https://github.com/qxuewei/XWCSDNDemos/tree/master/XWTouchResponderDemo)
+
+参考：
+* [https://www.jianshu.com/p/ef33cc31a614](https://www.jianshu.com/p/ef33cc31a614)
 
