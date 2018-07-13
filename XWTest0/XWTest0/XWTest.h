@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @interface XWTest : NSObject
+
+@property (nonatomic, copy) NSString *copyStr;
+
 - (void)foo;
 
 + (void)foo;

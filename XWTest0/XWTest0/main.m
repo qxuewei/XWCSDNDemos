@@ -9,12 +9,23 @@
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <malloc/malloc.h>
+#import "XWTest.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        NSObject *obj = [[NSObject alloc] init];
-        NSLog(@"%zd",malloc_size((__bridge const void *)obj));
+        NSString *str = [NSString stringWithFormat:@"123"];
+        XWTest *test = [XWTest new];
+        test.copyStrxxxx = str;
+        NSLog(@"str:%p --- copyStrxxxx:%p",str,test.copyStrxxxx);
     }
-    NSLog(@"%zd",class_getInstanceSize([obj class]));
     return 0;
 }
+
+//- (void)test{
+//    @autoreleasepool {
+//        NSObject *obj = [[NSObject alloc] init];
+//        NSLog(@"%zd",malloc_size((__bridge const void *)obj));
+//    }
+//    NSLog(@"%zd",class_getInstanceSize([obj class]));
+//    return 0;
+//}
