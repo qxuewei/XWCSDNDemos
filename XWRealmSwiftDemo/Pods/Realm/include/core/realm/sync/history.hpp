@@ -30,7 +30,26 @@
 #define REALM_SYNC_HISTORY_HPP
 
 namespace realm {
+namespace _impl {
+    struct ObjectIDHistoryState;
+}
+}
+
+namespace realm {
 namespace sync {
+
+struct VersionInfo {
+    /// Realm snapshot version.
+    version_type realm_version = 0;
+
+    /// The synchronization version corresponding to `realm_version`.
+    ///
+    /// In the context of the client-side history type `sync_version.version`
+    /// will currently always be equal to `realm_version` and
+    /// `sync_version.salt` will always be zero.
+    SaltedVersion sync_version = {0, 0};
+};
+
 
 class ClientHistoryBase :
         public InstructionReplication {
@@ -41,16 +60,21 @@ public:
     /// as the client file identifier and the synchronization progress as they
     /// are stored in that snapshot.
     ///
-    /// Note: The value of `progress.upload.last_integrated_server_version` is
-    /// not important to the caller, as long as the caller is the
-    /// synchronization client (`_impl::ClientImplBase`). The caller merely
-    /// passes the returned value back to find_uploadable_changesets() or
-    /// set_sync_progress(), so if the history implementation does not care
-    /// about the value of `progress.upload.last_integrated_server_version`, it
-    /// is allowed to not persist it. However, the implementation of
-    /// find_uploadable_changesets() must still be prepared for its value to be
-    /// determined by an incoming DOWNLAOD message, rather than being whatever
-    /// was returned by get_status().
+    /// Note: The value of `progress.upload.last_integrated_server_version` may
+    /// currently be wrong when the caller is the synchronization client
+    /// (`_impl::ClientImplBase`), in the sense that the server version number
+    /// may not actually be the version upon which the client version was based.
+    /// On the client, it must therefore only be used in a limited capacity,
+    /// namely to report download progress to the server. The number reflects a
+    /// lower bound on the server version that any changeset produced by the
+    /// client in the future can be based upon. The caller passes the returned
+    /// value back to find_uploadable_changesets() or set_sync_progress(), so if
+    /// the history implementation does not care about the value of
+    /// `progress.upload.last_integrated_server_version`, it is allowed to not
+    /// persist it. However, the implementation of find_uploadable_changesets()
+    /// must still be prepared for its value to be determined by an incoming
+    /// DOWNLOAD message, rather than being whatever was returned by
+    /// get_status().
     ///
     /// The returned current client version is the version produced by the last
     /// changeset in the history. The type of version returned here, is the one
@@ -82,11 +106,17 @@ public:
     /// identical identifiers for two client files if they are associated with
     /// different server Realms.
     ///
+    /// \param fix_up_object_ids The object ids that depend on client file ident
+    /// will be fixed in both state and history if this parameter is true. If
+    /// it is known that there are no objects to fix, it can be set to false to
+    /// achieve higher performance.
+    ///
     /// The client is required to obtain the file identifier before engaging in
     /// synchronization proper, and it must store the identifier and use it to
     /// reestablish the connection between the client file and the server file
     /// when engaging in future synchronization sessions.
-    virtual void set_client_file_ident(SaltedFileIdent client_file_ident) = 0;
+    virtual void set_client_file_ident(SaltedFileIdent client_file_ident,
+                                       bool fix_up_object_ids) = 0;
 
     /// Stores the SyncProgress progress in the associated Realm file in a way
     /// that makes it available via get_status() during future synchronization
@@ -100,7 +130,7 @@ public:
     /// unreliable when passed to the implementation through functions such as
     /// find_uploadable_changesets(). It may, or may not be the value last
     /// returned for it by get_status().
-    virtual void set_sync_progress(const SyncProgress& progress) = 0;
+    virtual void set_sync_progress(const SyncProgress& progress, VersionInfo&) = 0;
 
 /*
     /// Get the first history entry whose changeset produced a version that
@@ -202,10 +232,8 @@ public:
     ///
     /// If any of the changesets are invalid, this function returns false and
     /// sets `integration_error` to the appropriate value. If they are all
-    /// deemed valid, this function sets `new_client_version` to the produced
-    /// client version. The type of version specified here, is the one that
-    /// identifies an entry in the sync history. Whether this is the same as the
-    /// snapshot number of the Realm file depends on the history implementation.
+    /// deemed valid, this function updates \a version_info to reflect the new
+    /// version produced by the transaction.
     ///
     /// \param progress is the SyncProgress received in the download message.
     /// Progress will be persisted along with the changesets.
@@ -217,10 +245,10 @@ public:
     /// transaction.
     virtual bool integrate_server_changesets(const SyncProgress& progress,
                                              const RemoteChangeset* changesets,
-                                             std::size_t num_changesets,
-                                             IntegrationError& integration_error,
-                                             version_type& new_client_version, util::Logger&,
+                                             std::size_t num_changesets, VersionInfo& new_version,
+                                             IntegrationError& integration_error, util::Logger&,
                                              SyncTransactReporter* transact_reporter = nullptr) = 0;
+
 
 protected:
     ClientHistoryBase(const std::string& realm_path);
@@ -293,6 +321,61 @@ public:
     virtual void get_cooked_changeset(std::int_fast64_t index,
                                       util::AppendBuffer<char>&) const = 0;
 
+    /// set_initial_state_realm_history_numbers() sets the history numbers for
+    /// a new state Realm. The function is used when the server creates a new
+    /// State Realm.
+    ///
+    /// The history object must be in a write transaction before the function
+    /// call.
+    virtual void set_initial_state_realm_history_numbers(version_type local_version,
+                                                         sync::SaltedVersion server_version) = 0;
+
+    /// set_initial_collision_tables() copies the collision tables from
+    /// 'src_object_id_history_state' into the object id history state of this history.
+    /// The current object_id_history_state must be empty. This function is used when
+    /// the server creates a state Realm.
+    ///
+    /// The history object must be in a write transaction before the function
+    /// call.
+    virtual void set_initial_collision_tables(version_type local_version,
+                                              const _impl::ObjectIDHistoryState& src_object_id_history_state) = 0;
+
+    // virtual void set_client_file_ident_in_wt() sets the client file ident.
+    // The history must be in a write transaction with version 'current_version'.
+    virtual void set_client_file_ident_in_wt(version_type current_version,
+                                             SaltedFileIdent client_file_ident) = 0;
+
+    /// set_client_file_ident_and_downloaded_bytes() sets the salted client
+    /// file ident and downloaded_bytes. The function is used when a state
+    /// Realm has been downloaded from the server. The function creates a write
+    /// transaction.
+    virtual void set_client_file_ident_and_downloaded_bytes(SaltedFileIdent client_file_ident,
+                                                            uint_fast64_t downloaded_bytes) = 0;
+
+    /// set_client_reset_adjustments() is used by client reset to adjust the
+    /// content of the history compartment. The shared group associated with
+    /// this history object must be in a write transaction when this function
+    /// is called.
+    virtual void set_client_reset_adjustments(version_type current_version,
+                                      SaltedFileIdent client_file_ident,
+                                      sync::SaltedVersion server_version,
+                                      uint_fast64_t downloaded_bytes,
+                                      BinaryData uploadable_changeset) = 0;
+
+    struct LocalChangeset {
+        version_type version;
+        ChunkedBinaryData changeset;
+    };
+
+    // get_next_local_changeset returns the first changeset with version
+    // greater than or equal to 'begin_version'. 'begin_version' must be at
+    // least 1.
+    //
+    // The history must be in a transaction when this function is called.
+    // The return value is none if there are no such local changesets.
+    virtual Optional<LocalChangeset> get_next_local_changeset(version_type current_version,
+                                                              version_type begin_version) const = 0;
+
 protected:
     ClientHistory(const std::string& realm_path);
 };
@@ -307,6 +390,8 @@ protected:
 /// changesets to be identical copies of the raw changesets.
 class ClientHistory::ChangesetCooker {
 public:
+    virtual ~ChangesetCooker() {}
+
     /// \brief An opportunity to produce a cooked changeset.
     ///
     /// When the implementation chooses to produce a cooked changeset, it must

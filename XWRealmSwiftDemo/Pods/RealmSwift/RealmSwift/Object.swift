@@ -69,7 +69,6 @@ import Realm.Private
 @objc(RealmSwiftObject)
 open class Object: RLMObjectBase, ThreadConfined, RealmCollectionValue {
     /// :nodoc:
-    // swiftlint:disable:next identifier_name
     public static func _rlmArray() -> RLMArray<AnyObject> {
         return RLMArray(objectClassName: className())
     }
@@ -270,7 +269,7 @@ open class Object: RLMObjectBase, ThreadConfined, RealmCollectionValue {
 
      Objects are considered the same if and only if they are both managed by the same
      Realm and point to the same underlying object in the database.
-     
+
      - note: Equality comparison is implemented by `isEqual(_:)`. If the object type
              is defined with a primary key, `isEqual(_:)` behaves identically to this
              method. If the object type is not defined with a primary key,
@@ -369,6 +368,11 @@ public final class DynamicObject: Object {
         set(value) {
             RLMDynamicValidatedSet(self, key, value)
         }
+    }
+
+    /// :nodoc:
+    public override func dynamicList(_ propertyName: String) -> List<DynamicObject> {
+        return self[propertyName] as! List<DynamicObject>
     }
 
     /// :nodoc:

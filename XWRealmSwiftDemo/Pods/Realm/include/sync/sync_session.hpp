@@ -117,14 +117,19 @@ public:
         Active,
         Dying,
         Inactive,
-
-        // FIXME: This state no longer exists. This should be removed.
-        Error,
     };
-    PublicState state() const;
 
-    // FIXME: The error state no longer exists. This should be removed.
-    bool is_in_error_state() const { return false; }
+    enum class ConnectionState {
+        Disconnected,
+        Connecting,
+        Connected,
+    };
+
+    using SyncSessionStateCallback = void(PublicState old_state, PublicState new_state);
+    using ConnectionStateCallback = void(ConnectionState old_state, ConnectionState new_state);
+
+    PublicState state() const;
+    ConnectionState connection_state() const;
 
     // The on-disk path of the Realm file backing the Realm this `SyncSession` represents.
     std::string const& path() const { return m_realm_path; }
@@ -167,6 +172,14 @@ public:
     // Unregister a previously registered notifier. If the token is invalid,
     // this method does nothing.
     void unregister_progress_notifier(uint64_t);
+
+    // Registers a callback that is invoked when the the underlying sync session changes
+    // its connection state
+    uint64_t register_connection_change_callback(std::function<ConnectionStateCallback>);
+
+    // Unregisters a previously registered callback. If the token is invalid,
+    // this method does nothing
+    void unregister_connection_change_callback(uint64_t);
 
     // If possible, take the session and do anything necessary to make it `Active`.
     // Specifically:
@@ -213,6 +226,11 @@ public:
     // NOTE: This is intended for use only in very specific circumstances. Please check with the
     // object store team before using it.
     void override_server(std::string address, int port);
+
+    // Update the sync configuration used for this session. The new configuration must have the
+    // same user and reference realm url as the old configuration. The session will immediately
+    // disconnect (if it was active), and then attempt to connect using the new configuration.
+    void update_configuration(SyncConfig new_config);
 
     // An object representing the user who owns the Realm this `SyncSession` represents.
     std::shared_ptr<SyncUser> user() const
@@ -275,31 +293,54 @@ private:
     friend struct _impl::sync_session_states::Dying;
     friend struct _impl::sync_session_states::Inactive;
 
+    class ConnectionChangeNotifier {
+    public:
+        uint64_t add_callback(std::function<ConnectionStateCallback> callback);
+        void remove_callback(uint64_t token);
+        void invoke_callbacks(ConnectionState old_state, ConnectionState new_state);
+
+    private:
+        struct Callback {
+            std::function<ConnectionStateCallback> fn;
+            uint64_t token;
+        };
+
+        std::mutex m_callback_mutex;
+        std::vector<Callback> m_callbacks;
+
+        size_t m_callback_index = -1;
+        size_t m_callback_count = -1;
+        uint64_t m_next_token = 0;
+    };
+
     friend class realm::SyncManager;
     // Called by SyncManager {
-    static std::shared_ptr<SyncSession> create(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
+    static std::shared_ptr<SyncSession> create(_impl::SyncClient& client,std::string realm_path,
+                                               SyncConfig config, bool force_client_reset)
     {
         struct MakeSharedEnabler : public SyncSession {
-            MakeSharedEnabler(_impl::SyncClient& client, std::string realm_path, SyncConfig config)
-            : SyncSession(client, std::move(realm_path), std::move(config))
+            MakeSharedEnabler(_impl::SyncClient& client, std::string realm_path, SyncConfig config, bool force_client_reset)
+            : SyncSession(client, std::move(realm_path), std::move(config), force_client_reset)
             {}
         };
-        return std::make_shared<MakeSharedEnabler>(client, std::move(realm_path), std::move(config));
+        return std::make_shared<MakeSharedEnabler>(client, std::move(realm_path), std::move(config), force_client_reset);
     }
     // }
 
-    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig);
+    SyncSession(_impl::SyncClient&, std::string realm_path, SyncConfig, bool force_client_reset);
 
     void handle_error(SyncError);
-    void cancel_pending_waits();
+    void cancel_pending_waits(std::unique_lock<std::mutex>&);
     enum class ShouldBackup { yes, no };
     void update_error_and_mark_file_for_deletion(SyncError&, ShouldBackup);
-    static std::string get_recovery_file_path();
+    std::string get_recovery_file_path();
     void handle_progress_update(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
     void set_sync_transact_callback(std::function<SyncSessionTransactCallback>);
     void nonsync_transact_notify(VersionID::version_type);
 
+    PublicState get_public_state() const;
+    static ConnectionState get_public_connection_state(realm::sync::Session::ConnectionState);
     void advance_state(std::unique_lock<std::mutex>& lock, const State&);
 
     void create_sync_session();
@@ -311,9 +352,15 @@ private:
     mutable std::mutex m_state_mutex;
 
     const State* m_state = nullptr;
+
+    // The underlying state of the connection. Even when sharing connections, the underlying session
+    // will always start out as diconnected and then immediately transition to the correct state when calling
+    // bind().
+    sync::Session::ConnectionState m_connection_state = sync::Session::ConnectionState::disconnected;
     size_t m_death_count = 0;
 
     SyncConfig m_config;
+    bool m_force_client_reset;
 
     std::string m_realm_path;
     _impl::SyncClient& m_client;
@@ -350,7 +397,9 @@ private:
 
     std::string m_multiplex_identity;
 
-    _impl::SyncProgressNotifier m_notifier;
+    _impl::SyncProgressNotifier m_progress_notifier;
+    ConnectionChangeNotifier m_connection_change_notifier;
+
 
     class ExternalReference;
     std::weak_ptr<ExternalReference> m_external_reference;

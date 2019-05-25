@@ -58,6 +58,7 @@ public:
     // configuration is compatible with the existing one
     std::shared_ptr<Realm> get_realm(Realm::Config config);
     std::shared_ptr<Realm> get_realm();
+    void get_realm(Realm::Config config, std::function<void(std::shared_ptr<Realm>, std::exception_ptr)> callback);
 
     Realm::Config get_config() const { return m_config; }
 
@@ -146,6 +147,8 @@ public:
     partial_sync::WorkQueue& partial_sync_work_queue();
 #endif
 
+    AuditInterface* audit_context() const noexcept { return m_audit_context.get(); }
+
 private:
     Realm::Config m_config;
 
@@ -184,11 +187,16 @@ private:
     std::unique_ptr<partial_sync::WorkQueue> m_partial_sync_work_queue;
 #endif
 
+    std::shared_ptr<AuditInterface> m_audit_context;
+
     // must be called with m_notifier_mutex locked
     void pin_version(VersionID version);
 
     void set_config(const Realm::Config&);
-    void create_sync_session();
+    void create_sync_session(bool force_client_reset);
+    void do_get_realm(Realm::Config config, std::shared_ptr<Realm>& realm,
+                      std::unique_lock<std::mutex>& realm_lock);
+    std::shared_ptr<Realm> get_cached_realm(Realm::Config const& config);
 
     void run_async_notifiers();
     void open_helper_shared_group();
